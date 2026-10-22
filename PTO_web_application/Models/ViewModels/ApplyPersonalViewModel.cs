@@ -62,6 +62,16 @@ public class IdNumberDobMatchAttribute : ValidationAttribute
             {
                 return new ValidationResult($"Date of Birth does not match the ID Number (Expected: {dobFromId:yyyy-MM-dd}).");
             }
+
+            // Verification: the number must be a real South African ID (date, Luhn check digit)
+            if (!SaIdValidator.TryParse(model.IdNumber, out var dob, out var idGender, out var isCitizen))
+                return new ValidationResult("This is not a valid South African ID number. Check the digits.");
+
+            if (!string.IsNullOrEmpty(model.Gender) && model.Gender != idGender)
+                return new ValidationResult($"The gender does not match the ID number (the ID number says {idGender}).");
+
+            if (SaIdValidator.AgeOn(dob, DateTime.UtcNow.Date) < 21)
+                return new ValidationResult("You must be over 21 years old to apply.");
         }
         catch
         {

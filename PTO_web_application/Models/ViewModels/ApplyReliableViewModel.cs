@@ -20,16 +20,26 @@ public class ApplyReliableViewModel : IValidatableObject
     [Required(ErrorMessage = "Please select if this is your first time government subsidy")]
     public string IsFirstTimeGovernmentSubsidy { get; set; } = "Yes";
 
+    // Optional answers used for the need score (kept in the session only, nothing new is saved in Supabase)
+    public string IsMilitaryVeteran { get; set; } = "No";
+    public string IsElderly { get; set; } = "No";
+
     /// <summary>
     /// Eligibility rules (runs automatically because the class implements IValidatableObject):
     /// income below R3 500, South African, first-time owner, over 21, first-time subsidy.
     /// </summary>
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
-        // Income must be a real, non-negative number below the limit
-        var cleaned = (MonthlyIncome ?? string.Empty).Replace(" ", "").Replace("R", "").Replace("r", "").Replace(",", ".");
-        if (!decimal.TryParse(cleaned, System.Globalization.NumberStyles.Number,
-                System.Globalization.CultureInfo.InvariantCulture, out decimal income))
+        // 0. The other eligibility rules of the municipality
+        if (IsSouthAfrican == "No")
+            yield return new ValidationResult("You must be a South African citizen or naturalised.", new[] { nameof(IsSouthAfrican) });
+        if (IsFirstTimeHomeOwner == "No")
+            yield return new ValidationResult("You must be a first-time home owner.", new[] { nameof(IsFirstTimeHomeOwner) });
+        if (IsFirstTimeGovernmentSubsidy == "No")
+            yield return new ValidationResult("You must be a first-time government subsidy recipient.", new[] { nameof(IsFirstTimeGovernmentSubsidy) });
+
+        // 1. Check Age
+        if (IsOver21 == "No")
         {
             yield return new ValidationResult("Please enter a valid numerical amount for income.", new[] { nameof(MonthlyIncome) });
         }

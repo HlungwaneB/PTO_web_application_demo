@@ -3,6 +3,8 @@
     Layout = "_DashboardLayout";
 
     var status = ViewBag.CurrentStatus as string ?? "Verifying";
+    DateTime? startDate = ViewBag.StartDate;
+    DateTime? endDate = ViewBag.EndDate;
 
     bool step1Done = true;
     bool step2Done = (status == "Verifying" || status == "Pending" || status == "Approved");
@@ -20,58 +22,9 @@
     <h1 style="font-size: 38px; font-weight: 800; margin: 0 0 10px 0;">PTO Tracking</h1>
     <p style="font-size: 18px; margin: 0 0 60px 0;">Track your application</p>
 
-    <!-- ═══════════ TIMELINE (FORCED HORIZONTAL) ═══════════ -->
-    <div style="max-width: 1000px; margin: 0 auto 80px auto;">
-        <table style="width: 100%; border-collapse: collapse; text-align: center;">
-            <tr>
-                <!-- Step 1 -->
-                <td style="width: 25%; vertical-align: top;">
-                    <div style="@(step1Done? redDot : greyDot)">
-                        <i class="bi bi-check2"></i>
-                    </div>
-                    <span style="font-size: 16px; font-weight: 500; color: #1A1A1A;">Application submitted</span>
-                </td>
-
-                <!-- Step 2 -->
-                <td style="width: 25%; vertical-align: top;">
-                    <div style="@(step2Done? redDot : greyDot)">
-                        <i class="bi bi-check2"></i>
-                    </div>
-                    <span style="font-size: 16px; font-weight: 500; color: #1A1A1A;">Verifying</span>
-                </td>
-
-                <!-- Step 3 -->
-                <td style="width: 25%; vertical-align: top;">
-                    <div style="@(step3Done? redDot : greyDot)">
-                        <i class="bi bi-check2"></i>
-                    </div>
-                    <span style="font-size: 16px; font-weight: 500; color: #1A1A1A;">Panding</span>
-                </td>
-
-                <!-- Step 4 -->
-                <td style="width: 25%; vertical-align: top;">
-                    <div style="@(step4Done? redDot : greyDot)">
-                        <i class="bi bi-check2"></i>
-                    </div>
-                    <span style="font-size: 16px; font-weight: 500; color: #1A1A1A;">Approved</span>
-                </td>
-            </tr>
-
-            <!-- The Connecting Line -->
-            <tr>
-                <td colspan="4" style="padding: 0 40px;">
-                    <!-- This table holds the line and aligns it behind the dots -->
-                    <table style="width: 100%; border-collapse: collapse; margin-top: -55px; z-index: -1; position: relative;">
-                        <tr>
-                            <!-- Red Line (First 2 steps) -->
-                            <td style="width: 33.33%; height: 4px; background-color: #E53935;"></td>
-                            <!-- Grey Line (Last 2 steps) -->
-                            <td style="width: 66.66%; height: 4px; background-color: #d1d1d1;"></td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-        </table>
+    <!-- ═══════════ TRACKER (journey bar + timeline) ═══════════ -->
+    <div class="pto-tr-card" style="margin: 0 auto 60px auto;">
+        <partial name="_PtoTracker" model="new PTO_web_application.Models.ViewModels.PtoTrackerViewModel { Status = status, SubmittedOn = startDate, ValidUntil = endDate }" />
     </div>
 
     <!-- ═══════════ ACTION BUTTONS ═══════════ -->

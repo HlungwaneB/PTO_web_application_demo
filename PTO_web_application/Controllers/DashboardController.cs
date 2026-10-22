@@ -69,6 +69,8 @@ public class DashboardController : Controller
         ViewData["HasApplication"] = application != null;
 
         ViewBag.CurrentStatus = application?.CurrentStatus ?? "Pending";
+        ViewBag.StartDate = application?.StartDate;
+        ViewBag.EndDate = application?.EndDate;
 
         return View();
     }

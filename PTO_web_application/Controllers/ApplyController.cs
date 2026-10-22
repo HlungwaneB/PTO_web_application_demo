@@ -4,7 +4,6 @@ using PTO_web_application.Models;
 using PTO_web_application.Models.ViewModels;
 using PTO_web_application.Services;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System.ComponentModel.DataAnnotations;
 using PTO_web_application.Validation;
 
 namespace PTO_web_application.Controllers;
@@ -115,6 +114,14 @@ public class ApplyController : Controller
             }
         }
 
+        // Verification: one application per ID number (this only READS Supabase)
+        var existing = await _applicationService.GetMyApplicationAsync(model.IdNumber.Trim());
+        if (existing != null)
+        {
+            ModelState.AddModelError("IdNumber", "An application already exists for this ID number. Please log in or track it instead.");
+            return View(model);
+        }
+
         HttpContext.Session.SetObject("apply_personal", model);
         return RedirectToAction("Contact");
     }
@@ -190,8 +197,8 @@ public class ApplyController : Controller
 
         HttpContext.Session.SetObject("apply_contact", model);
 
-        // "Do you have dependants?" = NO: skip the Dependent screen
-        if (model.IsDependant == "No")
+        // Only people who answered YES to "Are you dependant" see the Dependent information step
+        if (model.IsDependant != "Yes")
         {
             HttpContext.Session.Remove("apply_dependent");
             return RedirectToAction("Documents");
@@ -230,6 +237,14 @@ public class ApplyController : Controller
         if (string.IsNullOrEmpty(model.Cellphone) || !System.Text.RegularExpressions.Regex.IsMatch(model.Cellphone, @"^0\d{9}$"))
             ModelState.AddModelError("Cellphone", "Cellphone must be a valid 10-digit number.");
 
+        // Verification: the dependant's ID number must be a real South African ID
+        if (!string.IsNullOrEmpty(model.IdNumber) && !SaIdValidator.IsValid(model.IdNumber))
+            ModelState.AddModelError("IdNumber", "This is not a valid South African ID number. Check the digits.");
+
+        var applicant = HttpContext.Session.GetObject<ApplyPersonalViewModel>("apply_personal");
+        if (applicant != null && model.IdNumber == applicant.IdNumber)
+            ModelState.AddModelError("IdNumber", "A dependant cannot have the same ID number as the applicant.");
+
         if (!ModelState.IsValid) return View(model);
 
         HttpContext.Session.SetObject("apply_dependent", model);
@@ -267,6 +282,20 @@ public class ApplyController : Controller
         {
             var problem = await FileRules.CheckAsync(file, label);
             if (problem != null) ModelState.AddModelError(string.Empty, problem);
+        }
+
+        // Verification: the two main documents are required, and every file must be a real PDF / JPG / PNG
+        if (model.CertifiedId == null || model.CertifiedId.Length == 0)
+            ModelState.AddModelError(string.Empty, "Upload your certified ID copy.");
+        if (model.ProofOfIncome == null || model.ProofOfIncome.Length == 0)
+            ModelState.AddModelError(string.Empty, "Upload your proof of income.");
+        foreach (var (file, label) in new[] { (model.CertifiedId, "Certified ID copy"), (model.ProofOfIncome, "Proof of income"), (model.DependentId, "Dependent ID") })
+        {
+            if (file != null && file.Length > 0)
+            {
+                var problem = await DocumentValidator.ValidateAsync(file, label);
+                if (problem != null) ModelState.AddModelError(string.Empty, problem);
+            }
         }
 
         if (!ModelState.IsValid) return View(model);
@@ -346,9 +375,11 @@ public class ApplyController : Controller
     // REVIEW
     // ═════════════════════════════════════════════
     [HttpGet]
-    public IActionResult Review()
+    public async Task<IActionResult> Review()
     {
-        return View(BuildReviewModel());
+        var review = BuildReviewModel();
+        await FillSiteNameAsync(review);
+        return View(review);
     }
 
     // ═════════════════════════════════════════════
@@ -369,7 +400,9 @@ public class ApplyController : Controller
         if (personal == null || contact == null || passwordStep == null)
         {
             ViewData["ErrorMessage"] = "Session expired. Please fill out the form again.";
-            return View("Review", BuildReviewModel());
+            var failedReview = BuildReviewModel();
+            await FillSiteNameAsync(failedReview);
+            return View("Review", failedReview);
         }
 
         // ---- Server-side re-check of everything collected in the earlier steps ----
@@ -470,7 +503,9 @@ public class ApplyController : Controller
         catch (Exception ex)
         {
             ViewData["ErrorMessage"] = $"Database Error: {ex.Message}";
-            return View("Review", BuildReviewModel());
+            var failedReview = BuildReviewModel();
+            await FillSiteNameAsync(failedReview);
+            return View("Review", failedReview);
         }
     }
 
@@ -487,11 +522,15 @@ public class ApplyController : Controller
         return View(model);
     }
 
-    /// <summary>True when the person using the wizard is a signed-in PTO Officer (assisting a beneficiary).</summary>
-    private bool IsOfficer()
+    // Looks up the real site name for the Review screen (read-only)
+    private async Task FillSiteNameAsync(ApplyReviewViewModel review)
     {
-        var who = HttpContext.Session.GetString("sb-id-number");
-        return !string.IsNullOrEmpty(who) && who.Trim().Equals("officer", StringComparison.OrdinalIgnoreCase);
+        var contact = HttpContext.Session.GetObject<ApplyContactViewModel>("apply_contact");
+        if (contact != null && Guid.TryParse(contact.SelectedSiteId, out var siteId))
+        {
+            var site = await _siteService.GetSiteByIdAsync(siteId);
+            if (site != null) review.SiteName = $"{site.SiteName} - {site.Location}";
+        }
     }
 
     // Helper method to rebuild the Review model if an error occurs

@@ -60,7 +60,9 @@ public class TrackController : Controller
             Surname = application.FullName.Split(' ').LastOrDefault() ?? application.FullName,
             Year = application.EndDate.Year.ToString(),
             SiteName = site?.SiteName ?? "Unknown Site",
-            Status = application.CurrentStatus // This will be "Verifying" or "Approved"
+            Status = application.CurrentStatus, // This will be "Verifying" or "Approved"
+            SubmittedOn = application.StartDate,
+            ValidUntil = application.EndDate
         };
 
         return View("Result", resultModel);

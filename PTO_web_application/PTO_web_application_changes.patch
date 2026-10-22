@@ -1,0 +1,673 @@
+diff -ruN -x .git repo/PTO_web_application/Controllers/ApplyController.cs repo/PTO_web_application/Controllers/ApplyController.cs
+--- repo/PTO_web_application/Controllers/ApplyController.cs	2026-10-22 13:42:31.296611351 +0200
++++ repo/PTO_web_application/Controllers/ApplyController.cs	2026-10-22 13:45:07.591183600 +0200
+@@ -4,6 +4,7 @@
+ using PTO_web_application.Models.ViewModels;
+ using PTO_web_application.Services;
+ using Microsoft.AspNetCore.Mvc.Rendering;
++using PTO_web_application.Validation;
+ 
+ namespace PTO_web_application.Controllers;
+ 
+@@ -66,7 +67,7 @@
+ 
+     [HttpPost]
+     [ValidateAntiForgeryToken]
+-    public IActionResult Personal(ApplyPersonalViewModel model)
++    public async Task<IActionResult> Personal(ApplyPersonalViewModel model)
+     {
+         if (!ModelState.IsValid) return View(model);
+ 
+@@ -96,6 +97,14 @@
+             }
+         }
+ 
++        // Verification: one application per ID number (this only READS Supabase)
++        var existing = await _applicationService.GetMyApplicationAsync(model.IdNumber.Trim());
++        if (existing != null)
++        {
++            ModelState.AddModelError("IdNumber", "An application already exists for this ID number. Please log in or track it instead.");
++            return View(model);
++        }
++
+         HttpContext.Session.SetObject("apply_personal", model);
+         return RedirectToAction("Contact");
+     }
+@@ -147,6 +156,13 @@
+         if (!ModelState.IsValid) return View(model);
+ 
+         HttpContext.Session.SetObject("apply_contact", model);
++
++        // Only people who answered YES to "Are you dependant" see the Dependent information step
++        if (model.IsDependant != "Yes")
++        {
++            HttpContext.Session.Remove("apply_dependent");
++            return RedirectToAction("Documents");
++        }
+         return RedirectToAction("Dependent");
+     }
+ 
+@@ -173,6 +189,14 @@
+         if (string.IsNullOrEmpty(model.Cellphone) || !System.Text.RegularExpressions.Regex.IsMatch(model.Cellphone, @"^0\d{9}$"))
+             ModelState.AddModelError("Cellphone", "Cellphone must be a valid 10-digit number.");
+ 
++        // Verification: the dependant's ID number must be a real South African ID
++        if (!string.IsNullOrEmpty(model.IdNumber) && !SaIdValidator.IsValid(model.IdNumber))
++            ModelState.AddModelError("IdNumber", "This is not a valid South African ID number. Check the digits.");
++
++        var applicant = HttpContext.Session.GetObject<ApplyPersonalViewModel>("apply_personal");
++        if (applicant != null && model.IdNumber == applicant.IdNumber)
++            ModelState.AddModelError("IdNumber", "A dependant cannot have the same ID number as the applicant.");
++
+         if (!ModelState.IsValid) return View(model);
+ 
+         HttpContext.Session.SetObject("apply_dependent", model);
+@@ -209,6 +233,20 @@
+             }
+         }
+ 
++        // Verification: the two main documents are required, and every file must be a real PDF / JPG / PNG
++        if (model.CertifiedId == null || model.CertifiedId.Length == 0)
++            ModelState.AddModelError(string.Empty, "Upload your certified ID copy.");
++        if (model.ProofOfIncome == null || model.ProofOfIncome.Length == 0)
++            ModelState.AddModelError(string.Empty, "Upload your proof of income.");
++        foreach (var (file, label) in new[] { (model.CertifiedId, "Certified ID copy"), (model.ProofOfIncome, "Proof of income"), (model.DependentId, "Dependent ID") })
++        {
++            if (file != null && file.Length > 0)
++            {
++                var problem = await DocumentValidator.ValidateAsync(file, label);
++                if (problem != null) ModelState.AddModelError(string.Empty, problem);
++            }
++        }
++
+         if (!ModelState.IsValid) return View(model);
+ 
+         async Task<string> UploadToSupabaseAsync(IFormFile file, string folder)
+@@ -272,9 +310,11 @@
+     // REVIEW
+     // ═════════════════════════════════════════════
+     [HttpGet]
+-    public IActionResult Review()
++    public async Task<IActionResult> Review()
+     {
+-        return View(BuildReviewModel());
++        var review = BuildReviewModel();
++        await FillSiteNameAsync(review);
++        return View(review);
+     }
+ 
+     // ═════════════════════════════════════════════
+@@ -295,7 +335,9 @@
+         if (personal == null || contact == null || passwordStep == null)
+         {
+             ViewData["ErrorMessage"] = "Session expired. Please fill out the form again.";
+-            return View("Review", BuildReviewModel());
++            var failedReview = BuildReviewModel();
++            await FillSiteNameAsync(failedReview);
++            return View("Review", failedReview);
+         }
+ 
+         try
+@@ -359,7 +401,9 @@
+         catch (Exception ex)
+         {
+             ViewData["ErrorMessage"] = $"Database Error: {ex.Message}";
+-            return View("Review", BuildReviewModel());
++            var failedReview = BuildReviewModel();
++            await FillSiteNameAsync(failedReview);
++            return View("Review", failedReview);
+         }
+     }
+ 
+@@ -376,6 +420,17 @@
+         return View(model);
+     }
+ 
++    // Looks up the real site name for the Review screen (read-only)
++    private async Task FillSiteNameAsync(ApplyReviewViewModel review)
++    {
++        var contact = HttpContext.Session.GetObject<ApplyContactViewModel>("apply_contact");
++        if (contact != null && Guid.TryParse(contact.SelectedSiteId, out var siteId))
++        {
++            var site = await _siteService.GetSiteByIdAsync(siteId);
++            if (site != null) review.SiteName = $"{site.SiteName} - {site.Location}";
++        }
++    }
++
+     // Helper method to rebuild the Review model if an error occurs
+     private ApplyReviewViewModel BuildReviewModel()
+     {
+diff -ruN -x .git repo/PTO_web_application/Controllers/DashboardController.cs repo/PTO_web_application/Controllers/DashboardController.cs
+--- repo/PTO_web_application/Controllers/DashboardController.cs	2026-10-22 13:42:31.296611351 +0200
++++ repo/PTO_web_application/Controllers/DashboardController.cs	2026-10-22 13:44:42.812368557 +0200
+@@ -69,6 +69,8 @@
+         ViewData["HasApplication"] = application != null;
+ 
+         ViewBag.CurrentStatus = application?.CurrentStatus ?? "Pending";
++        ViewBag.StartDate = application?.StartDate;
++        ViewBag.EndDate = application?.EndDate;
+ 
+         return View();
+     }
+diff -ruN -x .git repo/PTO_web_application/Controllers/TrackController.cs repo/PTO_web_application/Controllers/TrackController.cs
+--- repo/PTO_web_application/Controllers/TrackController.cs	2026-10-22 13:42:31.296611351 +0200
++++ repo/PTO_web_application/Controllers/TrackController.cs	2026-10-22 13:44:42.811530600 +0200
+@@ -57,7 +57,9 @@
+             Surname = application.FullName.Split(' ').LastOrDefault() ?? application.FullName,
+             Year = application.EndDate.Year.ToString(),
+             SiteName = site?.SiteName ?? "Unknown Site",
+-            Status = application.CurrentStatus // This will be "Verifying" or "Approved"
++            Status = application.CurrentStatus, // This will be "Verifying" or "Approved"
++            SubmittedOn = application.StartDate,
++            ValidUntil = application.EndDate
+         };
+ 
+         return View("Result", resultModel);
+diff -ruN -x .git repo/PTO_web_application/Models/ViewModels/ApplyPersonalViewModel.cs repo/PTO_web_application/Models/ViewModels/ApplyPersonalViewModel.cs
+--- repo/PTO_web_application/Models/ViewModels/ApplyPersonalViewModel.cs	2026-10-22 13:42:31.297774994 +0200
++++ repo/PTO_web_application/Models/ViewModels/ApplyPersonalViewModel.cs	2026-10-22 13:44:17.169331558 +0200
+@@ -1,4 +1,5 @@
+ ﻿using System.ComponentModel.DataAnnotations;
++using PTO_web_application.Validation;
+ 
+ namespace PTO_web_application.Models.ViewModels;
+ 
+@@ -54,6 +55,16 @@
+             {
+                 return new ValidationResult($"Date of Birth does not match the ID Number (Expected: {dobFromId:yyyy-MM-dd}).");
+             }
++
++            // Verification: the number must be a real South African ID (date, Luhn check digit)
++            if (!SaIdValidator.TryParse(model.IdNumber, out var dob, out var idGender, out var isCitizen))
++                return new ValidationResult("This is not a valid South African ID number. Check the digits.");
++
++            if (!string.IsNullOrEmpty(model.Gender) && model.Gender != idGender)
++                return new ValidationResult($"The gender does not match the ID number (the ID number says {idGender}).");
++
++            if (SaIdValidator.AgeOn(dob, DateTime.UtcNow.Date) < 21)
++                return new ValidationResult("You must be over 21 years old to apply.");
+         }
+         catch
+         {
+diff -ruN -x .git repo/PTO_web_application/Models/ViewModels/ApplyReliableViewModel.cs repo/PTO_web_application/Models/ViewModels/ApplyReliableViewModel.cs
+--- repo/PTO_web_application/Models/ViewModels/ApplyReliableViewModel.cs	2026-10-22 13:42:31.297774994 +0200
++++ repo/PTO_web_application/Models/ViewModels/ApplyReliableViewModel.cs	2026-10-22 13:44:17.168995870 +0200
+@@ -2,7 +2,7 @@
+ 
+ namespace PTO_web_application.Models.ViewModels;
+ 
+-public class ApplyReliableViewModel
++public class ApplyReliableViewModel : IValidatableObject
+ {
+     [Required(ErrorMessage = "Monthly income is required")]
+     public string MonthlyIncome { get; set; } = string.Empty;
+@@ -19,11 +19,23 @@
+     [Required(ErrorMessage = "Please select if this is your first time government subsidy")]
+     public string IsFirstTimeGovernmentSubsidy { get; set; } = "Yes";
+ 
++    // Optional answers used for the need score (kept in the session only, nothing new is saved in Supabase)
++    public string IsMilitaryVeteran { get; set; } = "No";
++    public string IsElderly { get; set; } = "No";
++
+     /// <summary>
+     /// Custom validation to ensure they are over 21 and earn less than 3500
+     /// </summary>
+     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+     {
++        // 0. The other eligibility rules of the municipality
++        if (IsSouthAfrican == "No")
++            yield return new ValidationResult("You must be a South African citizen or naturalised.", new[] { nameof(IsSouthAfrican) });
++        if (IsFirstTimeHomeOwner == "No")
++            yield return new ValidationResult("You must be a first-time home owner.", new[] { nameof(IsFirstTimeHomeOwner) });
++        if (IsFirstTimeGovernmentSubsidy == "No")
++            yield return new ValidationResult("You must be a first-time government subsidy recipient.", new[] { nameof(IsFirstTimeGovernmentSubsidy) });
++
+         // 1. Check Age
+         if (IsOver21 == "No")
+         {
+diff -ruN -x .git repo/PTO_web_application/Models/ViewModels/PtoTrackerViewModel.cs repo/PTO_web_application/Models/ViewModels/PtoTrackerViewModel.cs
+--- repo/PTO_web_application/Models/ViewModels/PtoTrackerViewModel.cs	1970-01-01 02:00:00.000000000 +0200
++++ repo/PTO_web_application/Models/ViewModels/PtoTrackerViewModel.cs	2026-10-22 13:44:33.764638092 +0200
+@@ -0,0 +1,81 @@
++namespace PTO_web_application.Models.ViewModels;
++
++/// <summary>
++/// Drives the shared tracker (journey bar + timeline). It only READS the status text that is already
++/// stored in applications.current_status, so nothing in Supabase changes.
++/// </summary>
++public class PtoTrackerViewModel
++{
++    public string Status { get; set; } = "Verifying";
++    public DateTime? SubmittedOn { get; set; }
++    public DateTime? ValidUntil { get; set; }
++
++    public class Step
++    {
++        public string Title { get; set; } = "";
++        public string Detail { get; set; } = "";
++        public string State { get; set; } = "next";   // done | now | next | bad
++    }
++
++    /// <summary>Segments of the 5-part bar that are green (finished).</summary>
++    public int Stage => Status switch
++    {
++        "Verifying" => 1,
++        "Pending" => 2,
++        "Approved" => 4,
++        "Completed" => 5,
++        "Rejected" => 2,
++        "Cancelled" => 1,
++        _ => 1
++    };
++
++    public string Headline => Status switch
++    {
++        "Verifying" => "Formalisation journey · Your documents are being verified.",
++        "Pending" => "Formalisation journey · Waiting for a decision.",
++        "Approved" => "Formalisation journey · PTO approved.",
++        "Completed" => "Formalisation journey · PTO completed.",
++        "Rejected" => "Formalisation journey · Application not approved.",
++        "Cancelled" => "Formalisation journey · Application cancelled.",
++        _ => "Formalisation journey"
++    };
++
++    public List<Step> Steps()
++    {
++        var s = Status;
++        bool rejected = s == "Rejected", cancelled = s == "Cancelled";
++        string Date(DateTime? d) => d.HasValue ? d.Value.ToString("dd MMM yyyy") : "";
++
++        var list = new List<Step>
++        {
++            new() { Title = "Application submitted", Detail = Date(SubmittedOn), State = "done" },
++            new() { Title = "Documents verified",
++                    Detail = s == "Verifying" ? "In progress" : cancelled ? "" : "All documents verified",
++                    State = s == "Verifying" ? "now" : cancelled ? "next" : "done" }
++        };
++
++        list.Add(new Step
++        {
++            Title = rejected ? "Not approved" : cancelled ? "Application cancelled" : "Waiting for a decision",
++            Detail = rejected ? "The application was rejected" : cancelled ? "" : s == "Pending" ? "In progress" : "",
++            State = rejected ? "bad" : cancelled ? "bad" : s == "Pending" ? "now" : (s == "Approved" || s == "Completed") ? "done" : "next"
++        });
++
++        if (!rejected && !cancelled)
++        {
++            list.Add(new Step
++            {
++                Title = "PTO approved",
++                Detail = s == "Approved" ? (ValidUntil.HasValue ? "Valid until " + Date(ValidUntil) : "") : s == "Completed" ? "Done" : "",
++                State = s == "Approved" ? "now" : s == "Completed" ? "done" : "next"
++            });
++            list.Add(new Step
++            {
++                Title = "Renewal",
++                Detail = s == "Completed" ? "Completed" : ValidUntil.HasValue ? "From " + Date(ValidUntil.Value.AddDays(-30)) : "Not yet due",
++                State = s == "Completed" ? "done" : "next"
++            });
++        }
++        return list;
++    }
++}
+diff -ruN -x .git repo/PTO_web_application/Models/ViewModels/TrackResultViewModel.cs repo/PTO_web_application/Models/ViewModels/TrackResultViewModel.cs
+--- repo/PTO_web_application/Models/ViewModels/TrackResultViewModel.cs	2026-10-22 13:42:31.297774994 +0200
++++ repo/PTO_web_application/Models/ViewModels/TrackResultViewModel.cs	2026-10-22 13:44:17.169486828 +0200
+@@ -9,6 +9,8 @@
+     public string Year { get; set; } = string.Empty;
+     public string SiteName { get; set; } = string.Empty;
+     public string Status { get; set; } = string.Empty;
++    public DateTime? SubmittedOn { get; set; }
++    public DateTime? ValidUntil { get; set; }
+ 
+     // 🟢 Helper to color the status text in the View
+     public string StatusClass => Status.ToLower() switch
+diff -ruN -x .git repo/PTO_web_application/Validation/SaIdValidator.cs repo/PTO_web_application/Validation/SaIdValidator.cs
+--- repo/PTO_web_application/Validation/SaIdValidator.cs	1970-01-01 02:00:00.000000000 +0200
++++ repo/PTO_web_application/Validation/SaIdValidator.cs	2026-10-22 13:44:04.216636336 +0200
+@@ -0,0 +1,122 @@
++using System.ComponentModel.DataAnnotations;
++
++namespace PTO_web_application.Validation;
++
++/// <summary>
++/// Verifies a South African ID number (13 digits): YYMMDD date of birth, SSSS gender sequence,
++/// C citizenship digit (0 = citizen, 1 = permanent resident) and Z, the Luhn check digit.
++/// A made-up ID number is rejected. (There is no Home Affairs lookup: the app checks the number itself.)
++/// Pure code - it does not touch the database.
++/// </summary>
++public static class SaIdValidator
++{
++    public static bool TryParse(string? id, out DateTime dateOfBirth, out string gender, out bool isCitizen)
++    {
++        dateOfBirth = default;
++        gender = string.Empty;
++        isCitizen = false;
++
++        if (string.IsNullOrWhiteSpace(id) || id.Length != 13 || !id.All(char.IsDigit))
++            return false;
++
++        int yy = int.Parse(id.Substring(0, 2));
++        int mm = int.Parse(id.Substring(2, 2));
++        int dd = int.Parse(id.Substring(4, 2));
++
++        // Two-digit year: later than this year's last two digits means 19xx
++        int currentYY = DateTime.UtcNow.Year % 100;
++        int year = yy > currentYY ? 1900 + yy : 2000 + yy;
++
++        try { dateOfBirth = new DateTime(year, mm, dd); }
++        catch (ArgumentOutOfRangeException) { return false; }
++
++        if (dateOfBirth.Date > DateTime.UtcNow.Date) return false;
++
++        int sequence = int.Parse(id.Substring(6, 4));
++        gender = sequence >= 5000 ? "Male" : "Female";
++        isCitizen = id[10] == '0';
++
++        return PassesLuhn(id);
++    }
++
++    public static bool IsValid(string? id) => TryParse(id, out _, out _, out _);
++
++    /// <summary>Luhn checksum: double every second digit from the right (the check digit is not doubled).</summary>
++    private static bool PassesLuhn(string id)
++    {
++        int sum = 0;
++        bool doubleIt = false;
++        for (int i = id.Length - 1; i >= 0; i--)
++        {
++            int d = id[i] - '0';
++            if (doubleIt)
++            {
++                d *= 2;
++                if (d > 9) d -= 9;
++            }
++            sum += d;
++            doubleIt = !doubleIt;
++        }
++        return sum % 10 == 0;
++    }
++
++    public static int AgeOn(DateTime dateOfBirth, DateTime today)
++    {
++        int age = today.Year - dateOfBirth.Year;
++        if (dateOfBirth.Date > today.AddYears(-age)) age--;
++        return age;
++    }
++}
++
++/// <summary>[SouthAfricanId] - put on a string property to validate the 13-digit ID number.</summary>
++public class SouthAfricanIdAttribute : ValidationAttribute
++{
++    public SouthAfricanIdAttribute()
++    {
++        ErrorMessage = "Enter a valid 13-digit South African ID number.";
++    }
++
++    public override bool IsValid(object? value)
++    {
++        var text = value as string;
++        if (string.IsNullOrEmpty(text)) return true; // [Required] handles empty values
++        return SaIdValidator.IsValid(text);
++    }
++}
++
++/// <summary>
++/// Verifies an uploaded supporting document: size, extension AND the real file signature
++/// (so a .exe renamed to .pdf is rejected). Pure code - the upload itself stays in ApplyController.
++/// </summary>
++public static class DocumentValidator
++{
++    private static readonly string[] AllowedExtensions = { ".pdf", ".jpg", ".jpeg", ".png" };
++    private const long MaxBytes = 5 * 1024 * 1024;
++
++    /// <summary>Returns an error message, or null when the file is acceptable.</summary>
++    public static async Task<string?> ValidateAsync(IFormFile file, string label)
++    {
++        if (file.Length > MaxBytes)
++            return $"{label}: the file is too large. The maximum size is 5 MB.";
++
++        var extension = Path.GetExtension(file.FileName ?? "").ToLowerInvariant();
++        if (!AllowedExtensions.Contains(extension))
++            return $"{label}: only PDF, JPG or PNG files are allowed.";
++
++        var header = new byte[8];
++        using (var stream = file.OpenReadStream())
++        {
++            int read = await stream.ReadAsync(header, 0, header.Length);
++            if (read < 4) return $"{label}: the file is empty or damaged.";
++        }
++
++        bool isPdf = header[0] == 0x25 && header[1] == 0x50 && header[2] == 0x44 && header[3] == 0x46;   // %PDF
++        bool isPng = header[0] == 0x89 && header[1] == 0x50 && header[2] == 0x4E && header[3] == 0x47;   // .PNG
++        bool isJpg = header[0] == 0xFF && header[1] == 0xD8 && header[2] == 0xFF;                        // JPEG
++
++        bool matches = (extension == ".pdf" && isPdf) || (extension == ".png" && isPng) ||
++                       ((extension == ".jpg" || extension == ".jpeg") && isJpg);
++
++        return matches ? null : $"{label}: the file content does not match its type. Upload a real PDF, JPG or PNG.";
++    }
++}
+diff -ruN -x .git repo/PTO_web_application/Views/Apply/Personal.cshtml repo/PTO_web_application/Views/Apply/Personal.cshtml
+--- repo/PTO_web_application/Views/Apply/Personal.cshtml	2026-10-22 13:42:31.299404169 +0200
++++ repo/PTO_web_application/Views/Apply/Personal.cshtml	2026-10-22 13:45:07.592059706 +0200
+@@ -61,7 +61,15 @@
+             <div class="pto-apply-row">
+                 <label asp-for="Title" class="pto-apply-label">Title</label>
+                 <div class="pto-apply-field">
+-                    <input asp-for="Title" class="pto-apply-input" />
++                    <select asp-for="Title" class="pto-apply-input" style="background: #d9d9d9; border: 1px solid #c0c0c0; border-radius: 20px; padding: 10px 20px; width: 100%; max-width: 380px; font-size: 16px; color: #1A1A1A; outline: none;">
++                        <option value="">-- Select title --</option>
++                        <option value="Mr">Mr</option>
++                        <option value="Mrs">Mrs</option>
++                        <option value="Ms">Ms</option>
++                        <option value="Miss">Miss</option>
++                        <option value="Dr">Dr</option>
++                        <option value="Prof">Prof</option>
++                    </select>
+                 </div>
+             </div>
+ 
+diff -ruN -x .git repo/PTO_web_application/Views/Apply/Reliable.cshtml repo/PTO_web_application/Views/Apply/Reliable.cshtml
+--- repo/PTO_web_application/Views/Apply/Reliable.cshtml	2026-10-22 13:42:31.299404169 +0200
++++ repo/PTO_web_application/Views/Apply/Reliable.cshtml	2026-10-22 13:45:12.124668827 +0200
+@@ -64,6 +64,7 @@
+                         <input type="radio" asp-for="IsSouthAfrican" value="No" />
+                         <span>No</span>
+                     </label>
++                    <span asp-validation-for="IsSouthAfrican" class="text-danger" style="font-size: 13px; margin-left: 12px;"></span>
+                 </div>
+             </div>
+ 
+@@ -79,6 +80,7 @@
+                         <input type="radio" asp-for="IsFirstTimeHomeOwner" value="No" />
+                         <span>No</span>
+                     </label>
++                    <span asp-validation-for="IsFirstTimeHomeOwner" class="text-danger" style="font-size: 13px; margin-left: 12px;"></span>
+                 </div>
+             </div>
+ 
+@@ -94,6 +96,7 @@
+                         <input type="radio" asp-for="IsOver21" value="No" />
+                         <span>No</span>
+                     </label>
++                    <span asp-validation-for="IsOver21" class="text-danger" style="font-size: 13px; margin-left: 12px;"></span>
+                 </div>
+             </div>
+ 
+@@ -109,6 +112,38 @@
+                         <input type="radio" asp-for="IsFirstTimeGovernmentSubsidy" value="No" />
+                         <span>No</span>
+                     </label>
++                    <span asp-validation-for="IsFirstTimeGovernmentSubsidy" class="text-danger" style="font-size: 13px; margin-left: 12px;"></span>
++                </div>
++            </div>
++
++
++            <!-- Military veteran (optional) -->
++            <div class="pto-apply-row">
++                <label class="pto-apply-label">Military veteran (optional)</label>
++                <div class="pto-apply-field pto-gender-field">
++                    <label class="pto-radio-label">
++                        <input type="radio" asp-for="IsMilitaryVeteran" value="Yes" />
++                        <span>Yes</span>
++                    </label>
++                    <label class="pto-radio-label">
++                        <input type="radio" asp-for="IsMilitaryVeteran" value="No" />
++                        <span>No</span>
++                    </label>
++                </div>
++            </div>
++
++            <!-- Elderly person -->
++            <div class="pto-apply-row">
++                <label class="pto-apply-label">Elderly person</label>
++                <div class="pto-apply-field pto-gender-field">
++                    <label class="pto-radio-label">
++                        <input type="radio" asp-for="IsElderly" value="Yes" />
++                        <span>Yes</span>
++                    </label>
++                    <label class="pto-radio-label">
++                        <input type="radio" asp-for="IsElderly" value="No" />
++                        <span>No</span>
++                    </label>
+                 </div>
+             </div>
+ 
+diff -ruN -x .git repo/PTO_web_application/Views/Dashboard/Tracking.cshtml repo/PTO_web_application/Views/Dashboard/Tracking.cshtml
+--- repo/PTO_web_application/Views/Dashboard/Tracking.cshtml	2026-10-22 13:42:31.299876161 +0200
++++ repo/PTO_web_application/Views/Dashboard/Tracking.cshtml	2026-10-22 13:44:56.605038241 +0200
+@@ -3,6 +3,8 @@
+     Layout = "_DashboardLayout";
+ 
+     var status = ViewBag.CurrentStatus as string ?? "Verifying";
++    DateTime? startDate = ViewBag.StartDate;
++    DateTime? endDate = ViewBag.EndDate;
+ 
+     bool step1Done = true;
+     bool step2Done = (status == "Verifying" || status == "Pending" || status == "Approved");
+@@ -20,58 +22,9 @@
+     <h1 style="font-size: 38px; font-weight: 800; margin: 0 0 10px 0;">PTO Tracking</h1>
+     <p style="font-size: 18px; margin: 0 0 60px 0;">Track your application</p>
+ 
+-    <!-- ═══════════ TIMELINE (FORCED HORIZONTAL) ═══════════ -->
+-    <div style="max-width: 1000px; margin: 0 auto 80px auto;">
+-        <table style="width: 100%; border-collapse: collapse; text-align: center;">
+-            <tr>
+-                <!-- Step 1 -->
+-                <td style="width: 25%; vertical-align: top;">
+-                    <div style="@(step1Done? redDot : greyDot)">
+-                        <i class="bi bi-check2"></i>
+-                    </div>
+-                    <span style="font-size: 16px; font-weight: 500; color: #1A1A1A;">Application submitted</span>
+-                </td>
+-
+-                <!-- Step 2 -->
+-                <td style="width: 25%; vertical-align: top;">
+-                    <div style="@(step2Done? redDot : greyDot)">
+-                        <i class="bi bi-check2"></i>
+-                    </div>
+-                    <span style="font-size: 16px; font-weight: 500; color: #1A1A1A;">Verifying</span>
+-                </td>
+-
+-                <!-- Step 3 -->
+-                <td style="width: 25%; vertical-align: top;">
+-                    <div style="@(step3Done? redDot : greyDot)">
+-                        <i class="bi bi-check2"></i>
+-                    </div>
+-                    <span style="font-size: 16px; font-weight: 500; color: #1A1A1A;">Panding</span>
+-                </td>
+-
+-                <!-- Step 4 -->
+-                <td style="width: 25%; vertical-align: top;">
+-                    <div style="@(step4Done? redDot : greyDot)">
+-                        <i class="bi bi-check2"></i>
+-                    </div>
+-                    <span style="font-size: 16px; font-weight: 500; color: #1A1A1A;">Approved</span>
+-                </td>
+-            </tr>
+-
+-            <!-- The Connecting Line -->
+-            <tr>
+-                <td colspan="4" style="padding: 0 40px;">
+-                    <!-- This table holds the line and aligns it behind the dots -->
+-                    <table style="width: 100%; border-collapse: collapse; margin-top: -55px; z-index: -1; position: relative;">
+-                        <tr>
+-                            <!-- Red Line (First 2 steps) -->
+-                            <td style="width: 33.33%; height: 4px; background-color: #E53935;"></td>
+-                            <!-- Grey Line (Last 2 steps) -->
+-                            <td style="width: 66.66%; height: 4px; background-color: #d1d1d1;"></td>
+-                        </tr>
+-                    </table>
+-                </td>
+-            </tr>
+-        </table>
++    <!-- ═══════════ TRACKER (journey bar + timeline) ═══════════ -->
++    <div class="pto-tr-card" style="margin: 0 auto 60px auto;">
++        <partial name="_PtoTracker" model="new PTO_web_application.Models.ViewModels.PtoTrackerViewModel { Status = status, SubmittedOn = startDate, ValidUntil = endDate }" />
+     </div>
+ 
+     <!-- ═══════════ ACTION BUTTONS ═══════════ -->
+diff -ruN -x .git repo/PTO_web_application/Views/Shared/_PtoTracker.cshtml repo/PTO_web_application/Views/Shared/_PtoTracker.cshtml
+--- repo/PTO_web_application/Views/Shared/_PtoTracker.cshtml	1970-01-01 02:00:00.000000000 +0200
++++ repo/PTO_web_application/Views/Shared/_PtoTracker.cshtml	2026-10-22 13:44:33.768638092 +0200
+@@ -0,0 +1,18 @@
++@model PTO_web_application.Models.ViewModels.PtoTrackerViewModel
++@* Shared tracker: 5-segment formalisation journey bar + step timeline. Used by Track/Result and Dashboard/Tracking. *@
++<div class="pto-tr-journey" aria-hidden="true">
++    @for (int i = 1; i <= 5; i++)
++    {
++        <span class="@(i <= Model.Stage ? "on" : (i == Model.Stage + 1 && Model.Status != "Rejected" && Model.Status != "Cancelled" ? "now" : ""))"></span>
++    }
++</div>
++<div class="pto-tr-text">@Model.Headline</div>
++<ul class="pto-tr-timeline">
++    @foreach (var step in Model.Steps())
++    {
++        <li class="@step.State">
++            <div class="pto-tr-title">@step.Title</div>
++            @if (!string.IsNullOrEmpty(step.Detail)) { <div class="pto-tr-detail">@step.Detail</div> }
++        </li>
++    }
++</ul>
+diff -ruN -x .git repo/PTO_web_application/Views/Track/Result.cshtml repo/PTO_web_application/Views/Track/Result.cshtml
+--- repo/PTO_web_application/Views/Track/Result.cshtml	2026-10-22 13:42:31.300536931 +0200
++++ repo/PTO_web_application/Views/Track/Result.cshtml	2026-10-22 13:44:42.812032199 +0200
+@@ -62,5 +62,10 @@
+             <span class="pto-status-sep">:</span>
+             <span class="pto-status-value @Model.StatusClass">@Model.Status</span>
+         </div>
++
++        <!-- Tracker: journey bar + timeline -->
++        <div class="pto-tr-card" style="margin-top: 28px; text-align: left;">
++            <partial name="_PtoTracker" model="new PTO_web_application.Models.ViewModels.PtoTrackerViewModel { Status = Model.Status, SubmittedOn = Model.SubmittedOn, ValidUntil = Model.ValidUntil }" />
++        </div>
+     </div>
+ </main>
+\ No newline at end of file
+diff -ruN -x .git repo/PTO_web_application/wwwroot/css/site.css repo/PTO_web_application/wwwroot/css/site.css
+--- repo/PTO_web_application/wwwroot/css/site.css	2026-10-22 13:42:31.300763752 +0200
++++ repo/PTO_web_application/wwwroot/css/site.css	2026-10-22 13:44:33.768638092 +0200
+@@ -2612,4 +2612,20 @@
+     background-color: #c9661e !important;
+     color: #1A1A1A !important;
+     font-weight: 700;
+-}
+\ No newline at end of file
++}
++/* ═══════════ Tracker (journey bar + timeline) - added, existing styles untouched ═══════════ */
++.pto-tr-journey { display: flex; gap: 4px; margin: 8px 0 4px; }
++.pto-tr-journey span { flex: 1; height: 6px; border-radius: 3px; background: #E4E4E4; }
++.pto-tr-journey span.on { background: #2E8B3A; }
++.pto-tr-journey span.now { background: #F26B1D; }
++.pto-tr-text { color: #F26B1D; font-size: 12px; font-weight: 600; margin-bottom: 16px; }
++.pto-tr-timeline { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
++.pto-tr-timeline li { position: relative; padding-left: 26px; }
++.pto-tr-timeline li::before { content: ""; position: absolute; left: 0; top: 3px; width: 14px; height: 14px; border-radius: 50%; background: #E0E0E0; }
++.pto-tr-timeline li.done::before { background: #2E8B3A; }
++.pto-tr-timeline li.now::before { background: #F26B1D; }
++.pto-tr-timeline li.bad::before { background: #C0392B; }
++.pto-tr-title { font-weight: 600; font-size: 14px; }
++.pto-tr-detail { color: #6F6F6F; font-size: 12px; }
++.pto-tr-timeline li.next .pto-tr-title { color: #6F6F6F; }
++.pto-tr-card { max-width: 760px; margin: 0 auto; }
