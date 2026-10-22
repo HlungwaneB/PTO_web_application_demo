@@ -1,0 +1,91 @@
+﻿@model PTO_web_application.Models.ViewModels.AdminPtoRecordsViewModel
+
+@{
+    ViewData["Title"] = "PTO Records";
+    Layout = "_AdminLayout";
+}
+
+<main class="admin-dashboard-main">
+
+    <!-- Page Title -->
+    <div class="admin-page-header">
+        <h1>PTO records</h1>
+        <p>Search by status, expiry, settlement or site</p>
+    </div>
+
+    <!-- Search Bar -->
+    <form asp-controller="Admin" asp-action="PtoRecords" method="get" style="margin-bottom: 20px;">
+        <div class="admin-search-box">
+            <i class="bi bi-search"></i>
+            <input type="text" name="search" value="@Model.SearchQuery" placeholder="Search" />
+            <input type="hidden" name="filter" value="@Model.ActiveFilter" />
+        </div>
+    </form>
+
+    <!-- Filter Pills -->
+    <div class="admin-filter-pills">
+        <a href="/Admin/PtoRecords?filter=All&search=@Model.SearchQuery"
+           class="filter-pill @(Model.ActiveFilter == "All" ? "active" : "")">All</a>
+
+        <a href="/Admin/PtoRecords?filter=Active&search=@Model.SearchQuery"
+           class="filter-pill @(Model.ActiveFilter == "Active" ? "active" : "")">Active</a>
+
+        <a href="/Admin/PtoRecords?filter=Expiring&search=@Model.SearchQuery"
+           class="filter-pill @(Model.ActiveFilter == "Expiring" ? "active" : "")">Expiring</a>
+
+        <a href="/Admin/PtoRecords?filter=Expired&search=@Model.SearchQuery"
+           class="filter-pill @(Model.ActiveFilter == "Expired" ? "active" : "")">Expired</a>
+
+        <a href="/Admin/PtoRecords?filter=Renewed&search=@Model.SearchQuery"
+           class="filter-pill @(Model.ActiveFilter == "Renewed" ? "active" : "")">Renewed</a>
+
+        <a href="/Admin/PtoRecords?filter=De-registered&search=@Model.SearchQuery"
+           class="filter-pill @(Model.ActiveFilter == "De-registered" ? "active" : "")">De-registered</a>
+    </div>
+
+    <!-- Table -->
+    <div class="admin-table-section" style="margin-top: 20px;">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>PTO ref</th>
+                    <th>Beneficiary</th>
+                    <th>Site</th>
+                    <th>Expiry</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Records.Count == 0)
+                {
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 40px; color: #888;">
+                            No PTO records found matching your search.
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var record in Model.Records)
+                    {
+                        <tr>
+                            <td>@record.PtoRef</td>
+                            <td>@record.Beneficiary</td>
+                            <td>@record.Site</td>
+                            <td>@record.ExpiryDate</td>
+                            <td>
+                                <span class="@record.StatusClass">@record.Status</span>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Action Buttons -->
+    <div style="margin-top: 30px; background: #d9d9d9; padding: 12px 20px;">
+        <a href="/Admin/Dashboard" class="pto-btn-back" style="background: #a8a8a8; color: white; text-decoration: none;">Back</a>
+    </div>
+
+</main>

@@ -1,0 +1,112 @@
+﻿@model PTO_web_application.Models.ViewModels.ApplyDocumentsViewModel
+
+@{
+    ViewData["Title"] = "Apply - Upload Documents";
+    Layout = "_ApplyLayout";
+}
+
+<!-- ═══════════ HEADER ═══════════ -->
+<header class="pto-apply-header">
+    <div class="pto-apply-brand">
+        <span class="pto-brand-my">my</span>
+        <span class="pto-brand-pto">PTO</span>
+        <span class="pto-brand-partner">
+            <img src="~/images/logo.png" alt="Mangaung" />
+            <span class="pto-brand-text">MANGAUNG</span>
+        </span>
+    </div>
+</header>
+
+<!-- ═══════════ ORANGE SUB-NAV ═══════════ -->
+<nav class="pto-apply-subnav">
+    <a href="#about" class="pto-subnav-link">About us</a>
+    <a href="/Apply" class="pto-subnav-link pto-subnav-active">Apply</a>
+  
+    <a href="#contact" class="pto-subnav-link">Contact us</a>
+</nav>
+
+<!-- ═══════════ MAIN ═══════════ -->
+<main class="pto-apply-main">
+    <div class="pto-apply-card">
+
+        <!-- Card title -->
+        <div class="pto-apply-card-title">
+            PTO Application
+        </div>
+
+        <form asp-controller="Apply" asp-action="Documents"
+              method="post" enctype="multipart/form-data"
+              class="pto-apply-form">
+            @Html.AntiForgeryToken()
+
+            <!-- Section title -->
+            <h2 class="pto-subsection-title">Upload Documents</h2>
+
+            <!-- Certified ID -->
+            <div class="pto-doc-row">
+                <label class="pto-doc-label">Certified ID</label>
+                <div class="pto-doc-actions">
+                    <input type="file"
+                           asp-for="CertifiedId"
+                           id="certifiedId"
+                           class="pto-file-input"
+                           accept=".pdf,.jpg,.jpeg,.png" />
+                    <label for="certifiedId" class="pto-btn-upload">Choose File</label>
+                    <span class="pto-file-name" id="certifiedIdName">No file chosen</span>
+                </div>
+            </div>
+
+            <!-- Proof of income -->
+            <div class="pto-doc-row">
+                <label class="pto-doc-label">Proof of income</label>
+                <div class="pto-doc-actions">
+                    <input type="file"
+                           asp-for="ProofOfIncome"
+                           id="proofOfIncome"
+                           class="pto-file-input"
+                           accept=".pdf,.jpg,.jpeg,.png" />
+                    <label for="proofOfIncome" class="pto-btn-upload">Choose File</label>
+                    <span class="pto-file-name" id="proofOfIncomeName">No file chosen</span>
+                </div>
+            </div>
+
+            <!-- Dependent ID -->
+            <div class="pto-doc-row">
+                <label class="pto-doc-label">Dependent ID</label>
+                <div class="pto-doc-actions">
+                    <input type="file"
+                           asp-for="DependentId"
+                           id="dependentId"
+                           class="pto-file-input"
+                           accept=".pdf,.jpg,.jpeg,.png" />
+                    <label for="dependentId" class="pto-btn-upload">Choose File</label>
+                    <span class="pto-file-name" id="dependentIdName">No file chosen</span>
+                </div>
+            </div>
+
+            <!-- Footer buttons -->
+            <div class="pto-apply-footer">
+                <button type="submit" class="pto-btn-save">Save and Continue</button>
+                <a href="/Apply/Dependent" class="pto-btn-back">Back</a>
+                <a href="/" class="pto-btn-cancel">Cancel</a>
+            </div>
+
+        </form>
+    </div>
+</main>
+
+@section Scripts {
+    <script>
+        // Show file name next to input
+        document.querySelectorAll('.pto-file-input').forEach(input => {
+            input.addEventListener('change', function () {
+                const nameEl = document.getElementById(this.id + 'Name');
+                if (nameEl) {
+                    nameEl.textContent = this.files.length > 0
+                        ? this.files[0].name
+                        : 'No file chosen';
+                }
+            });
+        });
+    </script>
+}

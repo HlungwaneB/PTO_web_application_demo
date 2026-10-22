@@ -1,0 +1,39 @@
+﻿@model PTO_web_application.Models.ViewModels.NotificationsViewModel
+
+@{
+    ViewData["Title"] = "Notifications";
+    Layout = "_DashboardLayout";
+}
+
+<main class="pto-notifications-main">
+    <h1 class="pto-notifications-title">Notifications</h1>
+
+    <div class="pto-notifications-list">
+        @if (!Model.Notifications.Any())
+        {
+            <p style="color: #888;">You have no new notifications.</p>
+        }
+        else
+        {
+            @foreach (var item in Model.Notifications)
+            {
+                <div class="pto-notification-card">
+                    <div class="pto-notification-left">
+                        <div class="pto-notif-dot dot-@item.ColorType"></div>
+                        <div class="pto-notification-content">
+                            <h3 class="pto-notif-title">@item.Title</h3>
+                            <p class="pto-notif-desc">@item.Description</p>
+                        </div>
+                    </div>
+                    <div class="pto-notification-date">
+                        @item.DateText
+                    </div>
+                </div>
+            }
+        }
+    </div>
+
+    <div class="pto-notif-actions">
+        <a href="/Dashboard" class="pto-btn-back">Back</a>
+    </div>
+</main>

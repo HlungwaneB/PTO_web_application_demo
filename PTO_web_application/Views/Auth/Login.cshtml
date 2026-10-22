@@ -1,0 +1,86 @@
+﻿@model PTO_web_application.Models.ViewModels.LoginViewModel
+
+@{
+    ViewData["Title"] = "Log in";
+    Layout = "_Layout";
+}
+
+<div class="pto-auth-page">
+
+    <!-- ═══════════ BACK BUTTON ═══════════ -->
+    <a href="/" class="pto-back-link">
+        <i class="bi bi-arrow-left"></i> Back
+    </a>
+
+    <!-- ═══════════ LOGIN CARD ═══════════ -->
+    <div class="pto-auth-card">
+
+        <!-- Logo -->
+        <div class="pto-auth-logo">
+            <img src="~/images/logo.png" alt="PTO" onerror="this.style.display='none'" />
+        </div>
+
+        <h2 class="pto-auth-title">Log in</h2>
+
+        <!-- Validation errors -->
+        @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ErrorCount > 0)
+        {
+            <div class="pto-auth-error">
+                @Html.ValidationSummary(true, "", new { @class = "mb-0" })
+            </div>
+        }
+
+        <!-- ═══════════ FORM ═══════════ -->
+        <form asp-controller="Auth" asp-action="Login" method="post" class="pto-auth-form">
+
+            <input type="hidden" asp-for="ReturnUrl" />
+
+            <!-- ID Number -->
+            <div class="pto-form-group">
+                <label asp-for="IdNumber" class="pto-form-label">
+                    ID Number
+                </label>
+                <input asp-for="IdNumber"
+                       class="pto-form-input"
+                       placeholder="Enter your ID number"
+                       autocomplete="username" />
+                <span asp-validation-for="IdNumber" class="pto-form-error"></span>
+            </div>
+
+            <!-- Password -->
+            <div class="pto-form-group">
+                <label asp-for="Password" class="pto-form-label">
+                    Password
+                </label>
+                <input asp-for="Password"
+                       type="password"
+                       class="pto-form-input"
+                       placeholder="Enter your password"
+                       autocomplete="current-password" />
+                <span asp-validation-for="Password" class="pto-form-error"></span>
+            </div>
+
+            <!-- Forgot Password -->
+            <div class="pto-forgot">
+                <a href="/Auth/ForgotPassword">Forgot Password</a>
+            </div>
+
+            <!-- Submit -->
+            <button type="submit" class="pto-btn-login-submit">
+                LOG IN
+            </button>
+
+            <!-- Register link -->
+            <p class="pto-auth-footer">
+                Did not Apply. <a href="/Apply">Apply now</a>
+            </p>
+
+        </form>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

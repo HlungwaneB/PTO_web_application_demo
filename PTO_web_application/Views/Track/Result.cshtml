@@ -1,0 +1,66 @@
+﻿@model PTO_web_application.Models.ViewModels.TrackResultViewModel
+
+@{
+    ViewData["Title"] = "P.T.O Status";
+    Layout = "_ApplyLayout";
+}
+
+<header class="pto-apply-header">
+    <div class="pto-apply-brand">
+        <span class="pto-brand-my">my</span>
+        <span class="pto-brand-pto">PTO</span>
+        <span class="pto-brand-partner">
+            <img src="~/images/logo.png" alt="Mangaung" />
+            <span class="pto-brand-text">MANGAUNG</span>
+        </span>
+    </div>
+</header>
+
+<main class="pto-status-main">
+    <div class="pto-status-card">
+        <h1 class="pto-status-title">P.T.O Status</h1>
+
+        <div class="pto-status-row">
+            <span class="pto-status-label">ID number</span>
+            <span class="pto-status-sep">:</span>
+            <span class="pto-status-value">@Model.IdNumber</span>
+        </div>
+
+        <div class="pto-status-row">
+            <span class="pto-status-label">Title</span>
+            <span class="pto-status-sep">:</span>
+            <span class="pto-status-value">@Model.Title</span>
+        </div>
+
+        <div class="pto-status-row">
+            <span class="pto-status-label">Initials</span>
+            <span class="pto-status-sep">:</span>
+            <span class="pto-status-value">@Model.Initials</span>
+        </div>
+
+        <div class="pto-status-row">
+            <span class="pto-status-label">Surname</span>
+            <span class="pto-status-sep">:</span>
+            <span class="pto-status-value">@Model.Surname</span>
+        </div>
+
+        <div class="pto-status-row">
+            <span class="pto-status-label">Year</span>
+            <span class="pto-status-sep">:</span>
+            <span class="pto-status-value">@Model.Year</span>
+        </div>
+
+        <div class="pto-status-row">
+            <span class="pto-status-label">Site</span>
+            <span class="pto-status-sep">:</span>
+            <span class="pto-status-value">@Model.SiteName</span>
+        </div>
+
+        <!-- 🟢 Status with dynamic color class -->
+        <div class="pto-status-row">
+            <span class="pto-status-label">Status</span>
+            <span class="pto-status-sep">:</span>
+            <span class="pto-status-value @Model.StatusClass">@Model.Status</span>
+        </div>
+    </div>
+</main>

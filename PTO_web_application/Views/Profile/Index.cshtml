@@ -1,0 +1,138 @@
+﻿@model PTO_web_application.Models.ViewModels.ProfileViewModel
+
+@{
+    ViewData["Title"] = "My Profile";
+    Layout = "_DashboardLayout";
+}
+
+<main class="pto-profile-main">
+    <div class="pto-profile-card">
+
+        <!-- ═══════════ PROFILE HEADER BANNER ═══════════ -->
+        <div class="pto-profile-header-banner">
+            <div class="pto-profile-avatar-large">
+                <i class="bi bi-person-fill"></i>
+            </div>
+            <h1 class="pto-profile-name">@Model.FullName</h1>
+
+            <div class="pto-profile-header-actions">
+                @if (Model.IsEditing)
+                {
+                    <!-- 🟢 Edit Mode Buttons: Orange for Save, Grey for Cancel -->
+                    <button type="submit" form="profileForm" class="pto-btn-edit" style="background: #E87A2D; color: white; border: none; font-weight: 600;">Save Changes</button>
+                    <a href="/Profile?tab=@Model.ActiveTab" class="pto-btn-logout" style="background: #a8a8a8; color: white; text-decoration: none;">Cancel</a>
+                }
+                else
+                {
+                    <!-- 🟢 View Mode Buttons: Outlined Orange for Edit, Solid Orange for Logout -->
+                    <a href="/Profile?tab=@Model.ActiveTab&isEditing=true" class="pto-btn-edit" style="text-decoration: none; line-height: 1.5; border-color: #E87A2D; color: #E87A2D;">Edit details</a>
+                    <form asp-controller="Auth" asp-action="Logout" method="post" style="display:inline;">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="pto-btn-logout" style="background: #E87A2D;">Log out</button>
+                    </form>
+                }
+            </div>
+        </div>
+
+        <!-- ═══════════ TABS ═══════════ -->
+        <div class="pto-profile-tabs">
+            <a href="/Profile?tab=personal&isEditing=@Model.IsEditing" class="pto-tab-btn @(Model.ActiveTab == "personal" ? "active" : "")">Personal</a>
+            <a href="/Profile?tab=address&isEditing=@Model.IsEditing" class="pto-tab-btn @(Model.ActiveTab == "address" ? "active" : "")">Address</a>
+            <a href="/Profile?tab=nextofkin&isEditing=@Model.IsEditing" class="pto-tab-btn @(Model.ActiveTab == "nextofkin" ? "active" : "")">Next of kin</a>
+        </div>
+
+        <!-- ═══════════ FORM ═══════════ -->
+        <form id="profileForm" asp-controller="Profile" asp-action="Index" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="ActiveTab" />
+
+            <!-- TAB 1: PERSONAL DETAILS -->
+            @if (Model.ActiveTab == "personal")
+            {
+                <h2 class="pto-profile-section-title">Personal details</h2>
+
+                <div class="pto-profile-grid">
+                    <div class="pto-profile-group">
+                        <label asp-for="Name" class="pto-profile-label">Name</label>
+                        <input asp-for="Name" class="pto-profile-input"
+                               readonly="@(Model.IsEditing ? null : "readonly")"
+                               style="@(Model.IsEditing ? "" : "background:#f0f0f0;")" />
+                    </div>
+
+                    <div class="pto-profile-group">
+                        <label asp-for="Surname" class="pto-profile-label">Surname</label>
+                        <input asp-for="Surname" class="pto-profile-input"
+                               readonly="@(Model.IsEditing ? null : "readonly")"
+                               style="@(Model.IsEditing ? "" : "background:#f0f0f0;")" />
+                    </div>
+
+                    <div class="pto-profile-group">
+                        <label asp-for="IdentityNumber" class="pto-profile-label">Identity Number</label>
+                        <input asp-for="IdentityNumber" class="pto-profile-input"
+                               readonly="@(Model.IsEditing ? null : "readonly")"
+                               style="@(Model.IsEditing ? "" : "background:#f0f0f0;")" />
+                    </div>
+                </div>
+
+                <h2 class="pto-profile-section-title">Contact details</h2>
+
+                <div class="pto-profile-grid">
+                    <div class="pto-profile-group">
+                        <label asp-for="PrimaryMobile" class="pto-profile-label">Primary mobile number</label>
+                        <input asp-for="PrimaryMobile" class="pto-profile-input"
+                               readonly="@(Model.IsEditing ? null : "readonly")"
+                               style="@(Model.IsEditing ? "" : "background:#f0f0f0;")" />
+                    </div>
+
+                    <div class="pto-profile-group">
+                        <label asp-for="PrimaryEmail" class="pto-profile-label">Primary email address</label>
+                        <input asp-for="PrimaryEmail" type="email" class="pto-profile-input"
+                               readonly="@(Model.IsEditing ? null : "readonly")"
+                               style="@(Model.IsEditing ? "" : "background:#f0f0f0;")" />
+                    </div>
+                </div>
+            }
+
+            <!-- TAB 2: ADDRESS DETAILS -->
+            @if (Model.ActiveTab == "address")
+            {
+                <h2 class="pto-profile-section-title">Address details</h2>
+                <div class="pto-profile-grid">
+                    <div class="pto-profile-group">
+                        <label asp-for="StreetNumber" class="pto-profile-label">Street number</label>
+                        <input asp-for="StreetNumber" class="pto-profile-input" />
+                    </div>
+                    <div class="pto-profile-group">
+                        <label asp-for="Suburb" class="pto-profile-label">Suburb</label>
+                        <input asp-for="Suburb" class="pto-profile-input" />
+                    </div>
+                    <div class="pto-profile-group">
+                        <label asp-for="PostalAddress" class="pto-profile-label">Postal address</label>
+                        <input asp-for="PostalAddress" class="pto-profile-input" />
+                    </div>
+                    <div class="pto-profile-group">
+                        <label asp-for="PostalCode" class="pto-profile-label">Postal code</label>
+                        <input asp-for="PostalCode" class="pto-profile-input" />
+                    </div>
+                </div>
+            }
+
+            <!-- TAB 3: NEXT OF KIN -->
+            @if (Model.ActiveTab == "nextofkin")
+            {
+                <h2 class="pto-profile-section-title">Next of kin details</h2>
+                <div class="pto-profile-grid">
+                    <div class="pto-profile-group">
+                        <label asp-for="KinName" class="pto-profile-label">Name</label>
+                        <input asp-for="KinName" class="pto-profile-input" />
+                    </div>
+                    <div class="pto-profile-group">
+                        <label asp-for="KinSurname" class="pto-profile-label">Surname</label>
+                        <input asp-for="KinSurname" class="pto-profile-input" />
+                    </div>
+                </div>
+            }
+
+        </form>
+    </div>
+</main>

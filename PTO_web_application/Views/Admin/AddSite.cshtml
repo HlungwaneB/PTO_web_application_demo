@@ -1,0 +1,72 @@
+﻿@model PTO_web_application.Models.ViewModels.AddSiteViewModel
+
+@{
+    ViewData["Title"] = "Add Site";
+    Layout = "_AdminLayout";
+}
+
+<main class="admin-dashboard-main">
+
+    <!-- Form Container -->
+    <div class="admin-form-container">
+
+        <!-- Grey Header -->
+        <div class="admin-form-header">
+            Add Site
+        </div>
+
+        <!-- Form Body -->
+        <form asp-controller="Admin" asp-action="AddSite" method="post" class="admin-form-body">
+            @Html.AntiForgeryToken()
+
+            <div asp-validation-summary="All" class="text-danger mb-3" style="color: red; font-weight: bold;"></div>
+
+            <!-- 🟢 Add this to show errors -->
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <!-- Site Number -->
+            <div class="admin-form-row">
+                <label asp-for="SiteNumber" class="admin-form-label">Site number</label>
+                <div style="flex-grow: 1;">
+                    <input asp-for="SiteNumber" class="admin-form-input" />
+                    <span asp-validation-for="SiteNumber" class="text-danger" style="font-size: 13px;"></span>
+                </div>
+            </div>
+
+            <!-- Settlement -->
+            <div class="admin-form-row">
+                <label asp-for="Settlement" class="admin-form-label">Settlement</label>
+                <div style="flex-grow: 1;">
+                    <input asp-for="Settlement" class="admin-form-input" />
+                    <span asp-validation-for="Settlement" class="text-danger" style="font-size: 13px;"></span>
+                </div>
+            </div>
+
+            <!-- Site Size -->
+            <div class="admin-form-row">
+                <label asp-for="SiteSize" class="admin-form-label">Site size (m²)</label>
+                <div style="flex-grow: 1;">
+                    <input asp-for="SiteSize" class="admin-form-input" />
+                    <span asp-validation-for="SiteSize" class="text-danger" style="font-size: 13px;"></span>
+                </div>
+            </div>
+
+            <!-- Location / GPS -->
+            <div class="admin-form-row">
+                <label asp-for="LocationGps" class="admin-form-label">Location / GPS</label>
+                <div style="flex-grow: 1;">
+                    <input asp-for="LocationGps" class="admin-form-input" />
+                </div>
+            </div>
+
+            <!-- Footer Buttons -->
+            <div class="admin-form-footer">
+                <button type="submit" class="admin-btn-save">Save site</button>
+                <a href="/Admin/Sites" class="admin-btn-back">Back</a>
+                <a href="/Admin/Sites" class="admin-btn-cancel">Cancel</a>
+            </div>
+
+        </form>
+    </div>
+
+</main>

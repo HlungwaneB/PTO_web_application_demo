@@ -1,0 +1,89 @@
+﻿@using Microsoft.AspNetCore.Http
+@{
+    // Get session data
+    var idNumber = Context.Session.GetString("sb-id-number");
+    var email = Context.Session.GetString("sb-user-email");
+    var fullName = Context.Session.GetString("sb-full-name");
+
+    // Logic: If Admin, show email. Otherwise, show full name.
+    string displayName;
+    if (idNumber?.Trim().ToLower() == "admin")
+    {
+        displayName = email ?? "admin@pto.local";
+    }
+    else
+    {
+        displayName = fullName ?? "User";
+    }
+
+    // Get initials for the avatar circle
+    var initials = displayName.Length >= 2
+        ? displayName.Substring(0, 2).ToUpper()
+        : displayName.ToUpper();
+
+    // Helper for active nav state
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+    string ActiveTab(string actionName) =>
+        (currentAction == actionName || (actionName == "Dashboard" && currentAction == "Index"))
+        ? "active-admin-tab" : "";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Admin Portal</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="admin-body">
+
+    <!-- ═══════════ HEADER ═══════════ -->
+    <header class="pto-dash-header">
+        <div class="pto-dash-brand">
+            <span class="pto-brand-my">my</span>
+            <span class="pto-brand-pto">PTO</span>
+            <span class="pto-brand-partner">
+                <img src="~/images/logo.png" alt="Mangaung" />
+                <span class="pto-brand-text">MANGAUNG</span>
+            </span>
+        </div>
+
+        <div class="pto-dash-user">
+            <a href="/Admin/Profile" class="pto-user-profile-link">
+                <div class="pto-user-avatar-badge">
+                    @initials
+                </div>
+                <span class="pto-user-name">@displayName</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- ═══════════ ADMIN TOP NAV ═══════════ -->
+    <nav class="pto-dash-subnav">
+        <a href="/Admin/Dashboard" class="pto-subnav-link @ActiveTab("Dashboard")">Dashboard</a>
+        <a href="/Admin/Applications" class="pto-subnav-link @ActiveTab("Applications")">Applications</a>
+        <a href="/Admin/PtoRecords" class="pto-subnav-link @ActiveTab("PtoRecords")">PTO Records</a>
+        <a href="/Admin/Sites" class="pto-subnav-link @ActiveTab("Sites")">Sites</a>
+        <a href="/Admin/Reports" class="pto-subnav-link @ActiveTab("Reports")">Reports</a>
+        <a href="/Admin/AuditLog" class="pto-subnav-link @ActiveTab("AuditLog")">Audit Log</a>
+
+        <form asp-controller="Auth" asp-action="Logout" method="post" style="margin: 0; flex: 1;">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="pto-subnav-link" style="background: transparent; border: none; width: 100%; height: 100%; cursor: pointer;">Log out</button>
+        </form>
+    </nav>
+
+    <!-- ═══════════ MAIN CONTENT ═══════════ -->
+    <main class="admin-main-content">
+        @RenderBody()
+    </main>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

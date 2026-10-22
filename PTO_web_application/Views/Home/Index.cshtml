@@ -1,0 +1,92 @@
+﻿@{
+    ViewData["Title"] = "Home";
+    Layout = "_Layout";
+}
+
+<div class="pto-home">
+
+    <!-- ═══════════ NAVBAR ═══════════ -->
+    <nav class="pto-navbar">
+        <a href="/" class="pto-logo">
+            <img src="~/images/logo.png" alt="PTO Logo" onerror="this.style.display='none'" />
+            <span>P.T.O</span>
+        </a>
+
+        <ul class="pto-nav-links">
+            <li><a href="#about">About us</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#contact">Contact us</a></li>
+        </ul>
+
+        <div class="d-flex align-items-center gap-4">
+            <button class="pto-search-icon" aria-label="Search">
+                <i class="bi bi-search"></i>
+            </button>
+            <a href="/Auth/Login" class="pto-btn-login">Log in</a>
+        </div>
+    </nav>
+
+    <!-- ═══════════ HERO ═══════════ -->
+    <section class="pto-hero">
+        <div class="pto-hero-text">
+            <h1>
+                Welcome to
+                <span class="highlight">P.T.O</span>
+            </h1>
+
+            <p class="pto-hero-subtitle">
+                Your fast, easy way to apply for land permits.
+            </p>
+
+            <div class="pto-hero-buttons">
+                <a href="/Apply" class="pto-btn-primary">
+                    Apply <i class="bi bi-arrow-right"></i>
+                </a>
+                <a href="/Track" class="pto-btn-outline">
+                    Track Application
+                </a>
+            </div>
+
+            <a href="/Admin/Login" class="pto-btn-admin">
+                Log in as admin
+            </a>
+        </div>
+
+        <div class="pto-hero-image">
+            <img src="~/images/hero-building.jpg"
+                 alt="PTO Building"
+                 onerror="this.src='https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200';" />
+        </div>
+    </section>
+
+    <!-- ═══════════ FOOTER ═══════════ -->
+    <footer class="pto-footer" id="contact">
+        <div>
+            <h4>Quick links</h4>
+            <ul class="pto-footer-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="#about">About us</a></li>
+                <li><a href="#services">Services</a></li>
+            </ul>
+        </div>
+
+        <div class="pto-footer-contact">
+            <h4>Contact us</h4>
+            <p>Call Center: 0551 259 8647</p>
+            <p>Email: support@pto.co.za</p>
+            <p>
+                Physical address: Bram Fischer Building, corner of Nelson Mandela
+                Drive and Markgraaff Street, Bloemfontein, 9301
+            </p>
+        </div>
+
+        <div>
+            <div class="pto-social-icons">
+                <a href="#" aria-label="WhatsApp"><i class="bi bi-whatsapp"></i></a>
+                <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+            </div>
+        </div>
+    </footer>
+
+</div>

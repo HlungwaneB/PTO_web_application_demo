@@ -1,0 +1,79 @@
+﻿@model PTO_web_application.Models.ViewModels.RenewPtoViewModel
+
+@{
+    ViewData["Title"] = "Renew PTO";
+    Layout = "_DashboardLayout";
+}
+
+<main style="padding: 60px 80px; background: #f8f9fa; min-height: 75vh;">
+
+    <div style="background: #ffffff; border: 1px solid #c0c0c0; border-radius: 8px; max-width: 1200px; margin: 0 auto; overflow: hidden;">
+
+        <!-- Grey Header -->
+        <div style="background: #e0e0e0; padding: 12px; text-align: center; font-size: 16px; font-weight: 600; color: #333; border-bottom: 1px solid #c0c0c0;">
+            Renew PTO
+        </div>
+
+        <!-- Form Body -->
+        <form asp-controller="Renew" asp-action="Index" method="post" style="padding: 30px 40px;">
+            @Html.AntiForgeryToken()
+
+            <!-- Row 1: Expiry Date (Now Dynamic) -->
+            <div style="display: flex; margin-bottom: 20px;">
+                <div style="width: 250px; font-size: 14px; color: #555;">Expiry date checked</div>
+                <div style="font-size: 14px; font-weight: 500; color: #1A1A1A;">@Model.ExpiryText</div>
+            </div>
+
+            <!-- Row 2: Still living at the site -->
+            <div style="display: flex; margin-bottom: 20px; align-items: center;">
+                <div style="width: 250px; font-size: 14px; color: #555;">Still living at the site</div>
+                <div style="display: flex; gap: 30px;">
+                    <label class="pto-radio-label">
+                        <input type="radio" asp-for="StillLivingAtSite" value="Yes" />
+                        <span>YES</span>
+                    </label>
+                    <label class="pto-radio-label">
+                        <input type="radio" asp-for="StillLivingAtSite" value="No" />
+                        <span>NO</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Row 3: Change in income -->
+            <div style="display: flex; margin-bottom: 20px; align-items: center;">
+                <div style="width: 250px; font-size: 14px; color: #555;">Change in income or household</div>
+                <div style="display: flex; gap: 30px;">
+                    <label class="pto-radio-label">
+                        <input type="radio" asp-for="ChangeInIncome" value="Yes" />
+                        <span>YES</span>
+                    </label>
+                    <label class="pto-radio-label">
+                        <input type="radio" asp-for="ChangeInIncome" value="No" />
+                        <span>NO</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Row 4: Notes -->
+            <div style="display: flex; margin-bottom: 20px; align-items: center;">
+                <div style="width: 250px; font-size: 14px; color: #555;">Notes (optional)</div>
+                <input asp-for="Notes" style="width: 300px; padding: 8px 12px; border: 1px solid #c0c0c0; border-radius: 4px; background: #f0f0f0; font-size: 14px; outline: none;" />
+            </div>
+
+        </form>
+
+        <!-- Footer Buttons -->
+        <div style="background: #e0e0e0; padding: 12px 40px; border-top: 1px solid #c0c0c0; display: flex; gap: 12px;">
+            <button type="submit" form="" onclick="document.querySelector('form').submit();"
+                    style="background: #a8a8a8; color: white; border: none; padding: 8px 16px; border-radius: 4px; font-size: 14px; cursor: pointer;">
+                Submit renewal request
+            </button>
+            <a href="/Dashboard"
+               style="background: #c0c0c0; color: #333; text-decoration: none; padding: 8px 16px; border-radius: 4px; font-size: 14px;">
+                Cancel
+            </a>
+        </div>
+
+    </div>
+
+</main>

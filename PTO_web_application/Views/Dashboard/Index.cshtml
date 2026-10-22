@@ -1,0 +1,52 @@
+﻿@model PTO_web_application.Models.ViewModels.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "_DashboardLayout";
+}
+
+<main class="pto-dash-main">
+
+    <!-- ═══════════ QUICK ACTIONS ═══════════ -->
+    <div class="pto-dash-actions">
+        <a href="/Dashboard/Tracking" class="pto-action-btn">Track Application</a>
+        <a href="/Renew" class="pto-action-btn">Renew PTO</a>
+    </div>
+
+    <!-- ═══════════ APPLICATION CARD ═══════════ -->
+    <section class="pto-app-card">
+
+        <!-- Card Header -->
+        <div class="pto-app-card-header">
+            <div>
+                <h2>My Application</h2>
+                <p class="pto-app-subtitle">View &amp; Track your Application</p>
+            </div>
+        </div>
+
+        <!-- Card Grid -->
+        <div class="pto-app-grid">
+            <!-- Current Site -->
+            <div class="pto-app-tile">
+                <span class="pto-tile-label">Current Site</span>
+                <span class="pto-tile-value">@Model.SiteName</span>
+            </div>
+
+            <!-- Lease period -->
+            <div class="pto-app-tile">
+                <span class="pto-tile-label">Lease period</span>
+                <span class="pto-tile-value">@Model.LeasePeriod</span>
+                <div class="pto-tile-action">
+                    <a href="/Renew" class="pto-btn-renew" style="text-decoration:none;">renew</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Download Link -->
+        <div class="pto-app-download">
+            <a href="#" class="pto-download-link">Download lease agreement</a>
+        </div>
+
+    </section>
+
+</main>

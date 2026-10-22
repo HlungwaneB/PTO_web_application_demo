@@ -1,0 +1,131 @@
+﻿@model PTO_web_application.Models.ViewModels.ApplyPersonalViewModel
+@{
+    ViewData["Title"] = "Apply - Personal Information";
+    Layout = "_ApplyLayout";
+}
+
+<!-- ═══════════ HEADER ═══════════ -->
+<header class="pto-apply-header">
+    <div class="pto-apply-brand">
+        <span class="pto-brand-my">my</span>
+        <span class="pto-brand-pto">PTO</span>
+        <span class="pto-brand-partner">
+            <img src="~/images/logo.png" alt="Mangaung" />
+            <span class="pto-brand-text">MANGAUNG</span>
+        </span>
+    </div>
+</header>
+
+<!-- ═══════════ ORANGE SUB-NAV ═══════════ -->
+<nav class="pto-apply-subnav">
+    <a href="#about" class="pto-subnav-link">About us</a>
+    <a href="#" class="pto-subnav-link">Apply</a>
+    <a href="#contact" class="pto-subnav-link">Contact us</a>
+</nav>
+
+<!-- ═══════════ FORM CARD ═══════════ -->
+<main class="pto-apply-main">
+    <div class="pto-apply-card">
+
+        <!-- Card title -->
+        <div class="pto-apply-card-title">
+            PTO Application
+        </div>
+
+        <!-- Card body -->
+        <form asp-controller="Apply" asp-action="Personal" method="post" class="pto-apply-form">
+            @Html.AntiForgeryToken()
+
+            <!-- General errors -->
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <!-- Surname -->
+            <div class="pto-apply-row">
+                <label asp-for="Surname" class="pto-apply-label">Surname</label>
+                <div class="pto-apply-field">
+                    <input asp-for="Surname" class="pto-apply-input" />
+                    <span asp-validation-for="Surname" class="text-danger" style="font-size: 13px;"></span>
+                </div>
+            </div>
+
+            <!-- Initials -->
+            <div class="pto-apply-row">
+                <label asp-for="Initials" class="pto-apply-label">Initials</label>
+                <div class="pto-apply-field">
+                    <input asp-for="Initials" class="pto-apply-input" maxlength="10" />
+                    <span asp-validation-for="Initials" class="text-danger" style="font-size: 13px;"></span>
+                </div>
+            </div>
+
+            <!-- Title -->
+            <div class="pto-apply-row">
+                <label asp-for="Title" class="pto-apply-label">Title</label>
+                <div class="pto-apply-field">
+                    <input asp-for="Title" class="pto-apply-input" />
+                </div>
+            </div>
+
+            <!-- First name(s) -->
+            <div class="pto-apply-row">
+                <label asp-for="FirstNames" class="pto-apply-label">First name(s)</label>
+                <div class="pto-apply-field">
+                    <input asp-for="FirstNames" class="pto-apply-input" />
+                    <span asp-validation-for="FirstNames" class="text-danger" style="font-size: 13px;"></span>
+                </div>
+            </div>
+
+            <!-- Date of Birth -->
+            <div class="pto-apply-row">
+                <label asp-for="DateOfBirth" class="pto-apply-label">
+                    Date of Birth(yyyy\mm\dd)
+                </label>
+                <div class="pto-apply-field pto-dob-field">
+                    <input asp-for="DateOfBirth" type="date" class="pto-apply-input pto-dob-input" />
+                    <!-- 🟢 Date of Birth validation span -->
+                    <span asp-validation-for="DateOfBirth" class="text-danger" style="font-size: 13px; display: block;"></span>
+                </div>
+            </div>
+
+            <!-- ID Number -->
+            <div class="pto-apply-row">
+                <label class="pto-apply-label">Enter the following</label>
+                <div class="pto-apply-field pto-id-row">
+                    <span class="pto-id-label">ID Number ⁄ Permanent ID NO</span>
+                    <input asp-for="IdNumber" class="pto-apply-input pto-id-input" maxlength="13" />
+                </div>
+            </div>
+            <div class="pto-apply-row">
+                <div class="pto-apply-label"></div>
+                <div class="pto-apply-field">
+                    <!-- 🟢 ID Number validation span -->
+                    <span asp-validation-for="IdNumber" class="text-danger" style="font-size: 13px;"></span>
+                </div>
+            </div>
+
+            <!-- Gender -->
+            <div class="pto-apply-row">
+                <label class="pto-apply-label">Gender</label>
+                <div class="pto-apply-field pto-gender-field">
+                    <label class="pto-radio-label">
+                        <input type="radio" asp-for="Gender" value="Male" />
+                        <span>Male</span>
+                    </label>
+                    <label class="pto-radio-label">
+                        <input type="radio" asp-for="Gender" value="Female" />
+                        <span>Female</span>
+                    </label>
+                    <!-- 🟢 Gender validation span -->
+                    <span asp-validation-for="Gender" class="text-danger" style="font-size: 13px;"></span>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="pto-apply-footer">
+                <button type="submit" class="pto-btn-save">Save and Continue</button>
+                <a href="/Apply/Reliable" class="pto-btn-back">Back</a>
+                <a href="/" class="pto-btn-cancel">Cancel</a>
+            </div>
+
+        </form>
+    </div>
+</main>

@@ -1,0 +1,28 @@
+﻿@model PTO_web_application.Models.ViewModels.TrackNotFoundViewModel
+
+@{
+    ViewData["Title"] = "Application Not Found";
+    Layout = "_ApplyLayout";
+}
+
+<header class="pto-apply-header">
+    <div class="pto-apply-brand">
+        <span class="pto-brand-my">my</span>
+        <span class="pto-brand-pto">PTO</span>
+        <span class="pto-brand-partner">
+            <img src="~/images/logo.png" alt="Mangaung" />
+            <span class="pto-brand-text">MANGAUNG</span>
+        </span>
+    </div>
+</header>
+
+<main class="pto-notfound-main">
+    <h1 class="pto-notfound-heading">Search for your PTO</h1>
+
+    <p class="pto-notfound-message">
+        Can not find an Application for this ID NO: @Model.IdNumber.
+        <a href="/Apply" class="pto-notfound-link">Apply</a>
+    </p>
+
+    <a href="/Track" class="pto-btn-back">Back</a>
+</main>

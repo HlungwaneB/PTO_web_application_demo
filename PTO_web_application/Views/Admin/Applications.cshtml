@@ -1,0 +1,85 @@
+﻿@model PTO_web_application.Models.ViewModels.AdminApplicationsViewModel
+
+@{
+    ViewData["Title"] = "Applications";
+    Layout = "_AdminLayout";
+}
+
+<main class="admin-dashboard-main">
+
+    <!-- Page Title -->
+    <div class="admin-page-header">
+        <h1>Applications</h1>
+        <p>Search and filter</p>
+    </div>
+
+    <!-- Search Bar -->
+    <form asp-controller="Admin" asp-action="Applications" method="get" style="margin-bottom: 20px;">
+        <div class="admin-search-box">
+            <i class="bi bi-search"></i>
+            <input type="text" name="search" value="@Model.SearchQuery" placeholder="Search name, ID or site" />
+            <input type="hidden" name="filter" value="@Model.ActiveFilter" />
+        </div>
+    </form>
+
+    <!-- Filter Pills -->
+    <div class="admin-filter-pills">
+        <a href="/Admin/Applications?filter=All&search=@Model.SearchQuery"
+           class="filter-pill @(Model.ActiveFilter == "All" ? "active" : "")">All</a>
+
+        <a href="/Admin/Applications?filter=Pending&search=@Model.SearchQuery"
+           class="filter-pill @(Model.ActiveFilter == "Pending" ? "active" : "")">Pending</a>
+
+        <a href="/Admin/Applications?filter=Approved&search=@Model.SearchQuery"
+           class="filter-pill @(Model.ActiveFilter == "Approved" ? "active" : "")">Approved</a>
+
+        <a href="/Admin/Applications?filter=Rejected&search=@Model.SearchQuery"
+           class="filter-pill @(Model.ActiveFilter == "Rejected" ? "active" : "")">Rejected</a>
+    </div>
+
+    <!-- Table -->
+    <div class="admin-table-section" style="margin-top: 20px;">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Applicant</th>
+                    <th>Site</th>
+                    <th>Settlement</th>
+                    <th>Submitted</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Applications.Count == 0)
+                {
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 40px; color: #888;">
+                            No applications found matching your search.
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var app in Model.Applications)
+                    {
+                        <tr>
+                            <td>@app.ApplicantName</td>
+                            <td>@app.Site</td>
+                            <td>@app.Settlement</td>
+                            <td>@app.SubmittedDate</td>
+                            <td>
+                                <span class="@app.StatusClass">@app.Status</span>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Action Buttons -->
+    <div style="margin-top: 30px; background: #d9d9d9; padding: 12px 20px;">
+        <a href="/Admin/Dashboard" class="pto-btn-back" style="background: #a8a8a8; color: white; text-decoration: none;">Back</a>
+    </div>
+
+</main>

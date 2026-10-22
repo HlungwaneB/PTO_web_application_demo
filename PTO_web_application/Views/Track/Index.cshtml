@@ -1,0 +1,65 @@
+﻿@model PTO_web_application.Models.ViewModels.TrackViewModel
+
+@{
+    ViewData["Title"] = "Track Application";
+    Layout = "_ApplyLayout";
+}
+
+<!-- ═══════════ HEADER ═══════════ -->
+<header class="pto-apply-header">
+    <div class="pto-apply-brand">
+        <span class="pto-brand-my">my</span>
+        <span class="pto-brand-pto">PTO</span>
+        <span class="pto-brand-partner">
+            <img src="~/images/logo.png" alt="Mangaung" />
+            <span class="pto-brand-text">MANGAUNG</span>
+        </span>
+    </div>
+</header>
+
+<!-- ═══════════ MAIN ═══════════ -->
+<main class="pto-track-main">
+
+    <!-- Page heading -->
+    <h1 class="pto-track-heading">Search for your PTO</h1>
+
+    <!-- Info banner -->
+    <div class="pto-track-info">
+        <p class="pto-track-info-line1">Please enter identity details</p>
+        <p class="pto-track-info-line2">
+            Required items marked with a <span class="pto-required">*</span>
+        </p>
+    </div>
+
+    <!-- Form -->
+    <form asp-controller="Track" asp-action="Index" method="post" class="pto-track-form">
+        @Html.AntiForgeryToken()
+
+        <!-- ID Number label block (left side) -->
+        <div class="pto-track-row">
+            <div class="pto-track-labels">
+                <label asp-for="IdNumber" class="pto-track-label-bold">
+                    ID Number:<span class="pto-required">*</span>
+                </label>
+                <div class="pto-track-or">OR</div>
+                <label class="pto-track-label-bold">
+                    Permanent ID\Passport:<span class="pto-required">*</span>
+                </label>
+            </div>
+
+            <!-- Single input -->
+            <div class="pto-track-input-wrap">
+                <input asp-for="IdNumber"
+                       class="pto-track-input"
+                       placeholder="" />
+            </div>
+        </div>
+
+        <!-- Submit -->
+        <div class="pto-track-submit-wrap">
+            <button type="submit" class="pto-btn-submit">Submit</button>
+        </div>
+
+    </form>
+
+</main>

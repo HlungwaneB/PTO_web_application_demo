@@ -1,0 +1,86 @@
+﻿@model PTO_web_application.Models.ViewModels.ApplicationSubmittedViewModel
+
+@{
+    ViewData["Title"] = "Application Submitted";
+    Layout = "_ApplyLayout";
+}
+
+<!-- ═══════════ HEADER ═══════════ -->
+<header class="pto-apply-header">
+    <div class="pto-apply-brand">
+        <span class="pto-brand-my">my</span>
+        <span class="pto-brand-pto">PTO</span>
+        <span class="pto-brand-partner">
+            <img src="~/images/logo.png" alt="Mangaung" />
+            <span class="pto-brand-text">MANGAUNG</span>
+        </span>
+    </div>
+</header>
+
+<!-- ═══════════ MAIN ═══════════ -->
+<main class="pto-submitted-main">
+
+    <!-- Success card -->
+    <div class="pto-submitted-card">
+
+        <!-- Big green check -->
+        <div class="pto-success-check">
+            <svg viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="26" cy="26" r="25" fill="#2E8B3E" />
+                <path fill="none" stroke="#ffffff" stroke-width="5"
+                      stroke-linecap="round" stroke-linejoin="round"
+                      d="M14 27 L23 36 L38 18" />
+            </svg>
+        </div>
+
+        <!-- Heading -->
+        <h1 class="pto-submitted-title">Application Submitted</h1>
+
+        <!-- Reference label -->
+        <p class="pto-submitted-sublabel">Reference Number</p>
+
+        <!-- Reference value -->
+        <p class="pto-submitted-reference">@Model.ReferenceNumber</p>
+
+        <!-- Footnote -->
+        <p class="pto-submitted-note">
+            You will be notified during the processing of your application.
+        </p>
+    </div>
+
+    <!-- Action buttons -->
+    <div class="pto-submitted-actions">
+        <a href="/" class="pto-btn-sub-home">Home</a>
+        <a href="/Dashboard/Tracking" class="pto-btn-sub-track">Track application</a>
+    </div>
+
+</main>
+
+<!-- ═══════════ FOOTER ═══════════ -->
+<footer class="pto-dash-footer">
+    <div>
+        <h4>Quick links</h4>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="#about">About us</a></li>
+            <li><a href="#">Team</a></li>
+        </ul>
+    </div>
+
+    <div>
+        <h4>Contact us</h4>
+        <p>Call Center: 0551 259 8647</p>
+        <p>Email: support@pto.co.za</p>
+        <p>
+            Physical address:<br />
+            Bram Fischer Building, corner of Nelson Mandela<br />
+            Drive and Markgraaff Street, Bloemfontein, 9301
+        </p>
+    </div>
+
+    <div class="pto-dash-socials">
+        <a href="#" aria-label="WhatsApp"><i class="bi bi-whatsapp"></i></a>
+        <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+        <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+    </div>
+</footer>

@@ -1,0 +1,89 @@
+﻿@model PTO_web_application.Models.ViewModels.AdminDashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "_AdminLayout";
+}
+
+<main class="admin-dashboard-main">
+
+    <!-- Page Title -->
+    <div class="admin-page-header">
+        <h1>Dashboard</h1>
+        <p>Overview of PTO information</p>
+    </div>
+
+    <!-- ═══════════ 8 STAT CARDS ═══════════ -->
+    <div class="admin-stats-grid">
+        <!-- Row 1 -->
+        <div class="admin-stat-card">
+            <span class="stat-label">Beneficiaries</span>
+            <span class="stat-value" style="color: #1A1A1A;">@Model.Beneficiaries</span>
+        </div>
+        <div class="admin-stat-card">
+            <span class="stat-label">Sites</span>
+            <span class="stat-value" style="color: #1A1A1A;">@Model.Sites</span>
+        </div>
+        <div class="admin-stat-card">
+            <span class="stat-label">Active PTOs</span>
+            <span class="stat-value" style="color: #2E8B3E;">@Model.ActivePtos</span>
+        </div>
+        <div class="admin-stat-card">
+            <span class="stat-label">Approaching expiry</span>
+            <span class="stat-value" style="color: #E87A2D;">@Model.ApproachingExpiry</span>
+        </div>
+
+        <!-- Row 2 -->
+        <div class="admin-stat-card">
+            <span class="stat-label">Expired</span>
+            <span class="stat-value" style="color: #D62828;">@Model.Expired</span>
+        </div>
+        <div class="admin-stat-card">
+            <span class="stat-label">Renewed</span>
+            <span class="stat-value" style="color: #1A73E8;">@Model.Renewed</span>
+        </div>
+        <div class="admin-stat-card">
+            <span class="stat-label">De-registered</span>
+            <span class="stat-value" style="color: #1A1A1A;">@Model.DeRegistered</span>
+        </div>
+        <div class="admin-stat-card">
+            <span class="stat-label">Pending applications</span>
+            <span class="stat-value" style="color: #B45309;">@Model.PendingApplications</span>
+        </div>
+    </div>
+
+    <!-- ═══════════ NEEDS ATTENTION TABLE ═══════════ -->
+    <div class="admin-table-section">
+        <h2>Needs attention</h2>
+
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Applicant</th>
+                    <th>Site</th>
+                    <th>Settlement</th>
+                    <th>Submitted</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.NeedsAttention)
+                {
+                    <tr>
+                        <td>@item.Applicant</td>
+                        <td>@item.Site</td>
+                        <td>@item.Settlement</td>
+                        <td>@item.Submitted</td>
+                        <td><span class="badge-pending">Pending</span></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Back Button (as seen in the screenshot) -->
+    <div style="margin-top: 40px;">
+        <a href="/" class="pto-btn-back">Back</a>
+    </div>
+
+</main>

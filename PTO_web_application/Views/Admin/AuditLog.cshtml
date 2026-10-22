@@ -1,0 +1,57 @@
+﻿@model PTO_web_application.Models.ViewModels.AdminAuditLogViewModel
+
+@{
+    ViewData["Title"] = "Audit log";
+    Layout = "_AdminLayout";
+}
+
+<main class="admin-dashboard-main">
+
+    <!-- Page Title -->
+    <div class="admin-page-header">
+        <h1>Audit log</h1>
+        <p>Record history: who changed what, and when</p>
+    </div>
+
+    <!-- Table -->
+    <div class="admin-table-section">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>When</th>
+                    <th>User</th>
+                    <th>Action</th>
+                    <th>Record</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Logs.Count == 0)
+                {
+                    <tr>
+                        <td colspan="4" style="text-align: center; padding: 40px; color: #888;">
+                            No audit logs found.
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var log in Model.Logs)
+                    {
+                        <tr>
+                            <td>@log.When</td>
+                            <td>@log.User</td>
+                            <td>@log.Action</td>
+                            <td>@log.Record</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Action Buttons -->
+    <div style="margin-top: 30px; background: #d9d9d9; padding: 12px 20px;">
+        <a href="/Admin/Dashboard" class="pto-btn-back" style="background: #a8a8a8; color: white; text-decoration: none;">Back</a>
+    </div>
+
+</main>

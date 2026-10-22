@@ -1,0 +1,124 @@
+﻿@using Microsoft.AspNetCore.Http
+@{
+    // Get session data
+    var idNumber = Context.Session.GetString("sb-id-number");
+    var email = Context.Session.GetString("sb-user-email");
+    var fullName = Context.Session.GetString("sb-full-name");
+
+    // Check if logged in
+    var isLoggedIn = !string.IsNullOrEmpty(idNumber);
+
+    // Logic: If Admin, show email. Otherwise, show full name.
+    string displayName;
+    if (idNumber?.Trim().ToLower() == "admin")
+    {
+        displayName = email ?? "admin@pto.local";
+    }
+    else
+    {
+        displayName = fullName ?? "User";
+    }
+
+    // Get initials for the avatar circle
+    var initials = displayName.Length >= 2
+        ? displayName.Substring(0, 2).ToUpper()
+        : displayName.ToUpper();
+
+    // Helper for active nav state
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - PTO</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="pto-dashboard-body">
+
+    <!-- ═══════════ HEADER ═══════════ -->
+    <header class="pto-dash-header">
+        <div class="pto-dash-brand">
+            <span class="pto-brand-my">my</span>
+            <span class="pto-brand-pto">PTO</span>
+            <span class="pto-brand-partner">
+                <img src="~/images/logo.png" alt="Mangaung" />
+                <span class="pto-brand-text">MANGAUNG</span>
+            </span>
+        </div>
+
+        <div class="pto-dash-user">
+            <a href="/Profile" class="pto-user-profile-link">
+                <div class="pto-user-avatar-badge">
+                    @initials
+                </div>
+                <span class="pto-user-name">@displayName</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- ═══════════ ORANGE SUB-NAV ═══════════ -->
+    <nav class="pto-dash-subnav">
+        <!-- 🟢 Pointing to future placeholder routes -->
+        <a href="/Home/About" class="pto-subnav-link @(currentAction == "About" ? "active-user-tab" : "")">About us</a>
+
+        @if (isLoggedIn)
+        {
+            <!-- Track Application goes to the Timeline -->
+            <a href="/Dashboard/Tracking" class="pto-subnav-link @(currentAction == "Tracking" ? "active-user-tab" : "")">Track Application</a>
+
+            <!-- 🟢 My Property goes back to the Dashboard Index -->
+            <a href="/Dashboard" class="pto-subnav-link @(currentController == "Dashboard" && currentAction == "Index" ? "active-user-tab" : "")">My Property</a>
+
+            <a href="/Notifications" class="pto-subnav-link @(currentController == "Notifications" ? "active-user-tab" : "")">Notifications</a>
+
+            <!-- 🟢 Contact us goes to a future placeholder route -->
+            <a href="/Home/Contact" class="pto-subnav-link @(currentAction == "Contact" ? "active-user-tab" : "")">Contact us</a>
+        }
+        else
+        {
+            <a href="/Apply" class="pto-subnav-link">Apply</a>
+            <a href="/Track" class="pto-subnav-link @(currentController == "Track" ? "active-user-tab" : "")">Track Application</a>
+            <a href="/Home/Contact" class="pto-subnav-link">Contact us</a>
+        }
+    </nav>
+
+    <!-- ═══════════ MAIN CONTENT ═══════════ -->
+    <main>
+        @RenderBody()
+    </main>
+
+    <!-- ═══════════ FOOTER ═══════════ -->
+    <footer class="pto-dash-footer">
+        <div>
+            <h4>Quick links</h4>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="#about">About us</a></li>
+                <li><a href="#">Team</a></li>
+            </ul>
+        </div>
+        <div>
+            <h4>Contact us</h4>
+            <p>Call Center: 0551 259 8647</p>
+            <p>Email: support@pto.co.za</p>
+            <p>Physical address:<br />Bram Fischer Building, corner of Nelson Mandela Drive and Markgraaff Street, Bloemfontein, 9301</p>
+        </div>
+        <div class="pto-dash-socials">
+            <a href="#" aria-label="WhatsApp"><i class="bi bi-whatsapp"></i></a>
+            <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+            <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

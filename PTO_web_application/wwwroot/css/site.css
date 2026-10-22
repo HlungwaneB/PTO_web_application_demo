@@ -1,0 +1,2615 @@
+﻿/* ═══════════════════════════════════════════════════════
+   GLOBAL VARIABLES
+   ═══════════════════════════════════════════════════════ */
+:root {
+    --pto-orange: #E87A2D;
+    --pto-navy: #1B1464;
+    --pto-dark: #0D0D0D;
+    --pto-text: #1A1A1A;
+    --pto-gray: #6B6B6B;
+}
+
+/* ═══════════════════════════════════════════════════════
+   HOME PAGE STYLES
+   ═══════════════════════════════════════════════════════ */
+
+.pto-home {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    color: var(--pto-text);
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+    .pto-home * {
+        box-sizing: border-box;
+    }
+
+/* ─── NAVBAR ─── */
+.pto-navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 60px;
+    background: #fff;
+    border-bottom: 1px solid #eee;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.pto-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--pto-orange);
+    text-decoration: none;
+}
+
+    .pto-logo img {
+        height: 50px;
+        width: auto;
+    }
+
+.pto-nav-links {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+    .pto-nav-links a {
+        color: var(--pto-text);
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: 500;
+        transition: color 0.2s;
+    }
+
+        .pto-nav-links a:hover,
+        .pto-nav-links a.active {
+            color: var(--pto-orange);
+        }
+
+.pto-search-icon {
+    font-size: 22px;
+    color: var(--pto-orange);
+    cursor: pointer;
+    border: none;
+    background: none;
+    padding: 0;
+    line-height: 1;
+}
+
+    .pto-search-icon:hover {
+        color: #d16a20;
+    }
+
+.pto-btn-login {
+    background: var(--pto-orange);
+    color: #fff;
+    border: none;
+    padding: 12px 36px;
+    border-radius: 30px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: background 0.2s;
+}
+
+    .pto-btn-login:hover {
+        background: #d16a20;
+        color: #fff;
+        text-decoration: none;
+    }
+
+/* ─── HERO SECTION ─── */
+.pto-hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 580px;
+    background: #fff;
+    position: relative;
+    overflow: hidden;
+}
+
+.pto-hero-text {
+    padding: 80px 60px 80px 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.pto-hero h1 {
+    font-size: 72px;
+    font-weight: 800;
+    line-height: 1.05;
+    margin: 0 0 20px 0;
+    color: var(--pto-dark);
+    letter-spacing: -1px;
+}
+
+    .pto-hero h1 .highlight {
+        color: var(--pto-orange);
+        display: block;
+    }
+
+.pto-hero-subtitle {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--pto-text);
+    margin-bottom: 40px;
+    line-height: 1.4;
+}
+
+.pto-hero-buttons {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    align-items: center;
+}
+
+.pto-btn-primary {
+    background: var(--pto-orange);
+    color: #fff;
+    border: none;
+    padding: 14px 40px;
+    border-radius: 30px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.2s;
+}
+
+    .pto-btn-primary:hover {
+        background: #d16a20;
+        color: #fff;
+        text-decoration: none;
+    }
+
+.pto-btn-outline {
+    background: #fff;
+    color: var(--pto-text);
+    border: 2px solid var(--pto-orange);
+    padding: 12px 38px;
+    border-radius: 30px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s;
+}
+
+    .pto-btn-outline:hover {
+        background: var(--pto-orange);
+        color: #fff;
+        text-decoration: none;
+    }
+
+.pto-btn-admin {
+    background: var(--pto-dark);
+    color: #fff;
+    border: none;
+    padding: 14px 36px;
+    border-radius: 30px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 12px;
+    transition: background 0.2s;
+    width: fit-content;
+}
+
+    .pto-btn-admin:hover {
+        background: #2a2a2a;
+        color: #fff;
+        text-decoration: none;
+    }
+
+.pto-hero-image {
+    position: relative;
+    overflow: hidden;
+    min-height: 580px;
+}
+
+    .pto-hero-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        display: block;
+    }
+
+/* ─── HOME FOOTER ─── */
+.pto-footer {
+    background: var(--pto-navy);
+    color: #fff;
+    padding: 50px 100px 40px 100px;
+    display: grid;
+    grid-template-columns: 1fr 1.5fr 1fr;
+    gap: 40px;
+}
+
+    .pto-footer h4 {
+        font-size: 16px;
+        font-weight: 700;
+        margin: 0 0 20px 0;
+        color: #fff;
+    }
+
+.pto-footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+    .pto-footer-links li {
+        margin-bottom: 10px;
+    }
+
+    .pto-footer-links a {
+        color: #C5C4DD;
+        text-decoration: none;
+        font-size: 14px;
+        transition: color 0.2s;
+    }
+
+        .pto-footer-links a:hover {
+            color: var(--pto-orange);
+            text-decoration: none;
+        }
+
+.pto-footer-contact p {
+    color: #C5C4DD;
+    font-size: 14px;
+    margin: 0 0 12px 0;
+    line-height: 1.6;
+}
+
+.pto-social-icons {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+    justify-content: flex-end;
+}
+
+    .pto-social-icons a {
+        color: #fff;
+        font-size: 22px;
+        transition: color 0.2s;
+        text-decoration: none;
+    }
+
+        .pto-social-icons a:hover {
+            color: var(--pto-orange);
+            text-decoration: none;
+        }
+
+
+/* ═══════════════════════════════════════════════════════
+   LOGIN / AUTH PAGE STYLES
+   ═══════════════════════════════════════════════════════ */
+
+.pto-auth-page {
+    min-height: 100vh;
+    background-color: #ffffff;
+    background-image: url('/images/logo.png');
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 40%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+    .pto-auth-page::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: rgba(255, 255, 255, 0.85);
+        z-index: 1;
+        pointer-events: none;
+    }
+
+.pto-back-link {
+    position: absolute;
+    top: 30px;
+    left: 40px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #E87A2D;
+    font-size: 22px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.2s;
+    z-index: 10;
+}
+
+    .pto-back-link:hover {
+        color: #d16a20;
+        text-decoration: none;
+    }
+
+    .pto-back-link i {
+        font-size: 24px;
+    }
+
+.pto-auth-card {
+    position: relative;
+    z-index: 5;
+    background: #ffffff;
+    border: 1px solid #d8d8d8;
+    border-radius: 24px;
+    padding: 50px 60px 45px 60px;
+    width: 100%;
+    max-width: 480px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    text-align: center;
+}
+
+.pto-auth-logo {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 8px;
+}
+
+    .pto-auth-logo img {
+        height: 70px;
+        width: auto;
+    }
+
+.pto-auth-title {
+    font-size: 30px;
+    font-weight: 700;
+    color: #1A1A1A;
+    margin: 0 0 30px 0;
+    letter-spacing: -0.5px;
+}
+
+.pto-auth-error {
+    background: #fdecea;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    text-align: left;
+}
+
+    .pto-auth-error ul {
+        margin: 0;
+        padding-left: 20px;
+    }
+
+    .pto-auth-error.validation-summary-valid {
+        display: none;
+    }
+
+.pto-auth-form {
+    text-align: left;
+}
+
+.pto-form-group {
+    margin-bottom: 22px;
+}
+
+.pto-form-label {
+    display: block;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1A1A1A;
+    margin-bottom: 8px;
+}
+
+.pto-form-input {
+    width: 100%;
+    border: none;
+    border-bottom: 1.5px solid #333;
+    background: transparent;
+    padding: 8px 0;
+    font-size: 16px;
+    color: #1A1A1A;
+    outline: none;
+    transition: border-color 0.2s;
+    border-radius: 0;
+}
+
+    .pto-form-input:focus {
+        border-bottom-color: #E87A2D;
+    }
+
+    .pto-form-input::placeholder {
+        color: #aaa;
+        font-size: 14px;
+    }
+
+.pto-form-error {
+    display: block;
+    color: #c0392b;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+.pto-forgot {
+    text-align: left;
+    margin-top: -10px;
+    margin-bottom: 35px;
+}
+
+    .pto-forgot a {
+        color: #1A1A1A;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+        .pto-forgot a:hover {
+            color: #E87A2D;
+            text-decoration: underline;
+        }
+
+.pto-btn-login-submit {
+    display: block;
+    width: 100%;
+    background: transparent;
+    color: #1A1A1A;
+    border: 2px solid #1A1A1A;
+    padding: 14px 0;
+    border-radius: 30px;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.25s;
+    margin-top: 10px;
+}
+
+    .pto-btn-login-submit:hover {
+        background: #1A1A1A;
+        color: #ffffff;
+    }
+
+.pto-auth-footer {
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1A1A1A;
+    margin-top: 22px;
+    margin-bottom: 0;
+}
+
+    .pto-auth-footer a {
+        color: #1A1A1A;
+        text-decoration: underline;
+        font-weight: 700;
+    }
+
+        .pto-auth-footer a:hover {
+            color: #E87A2D;
+        }
+
+
+/* ═══════════════════════════════════════════════════════
+   APPLY WIZARD STYLES
+   ═══════════════════════════════════════════════════════ */
+
+.pto-apply-body {
+    margin: 0;
+    padding: 0;
+    background: #f5f5f5;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    color: #1A1A1A;
+}
+
+.pto-apply-header {
+    display: flex;
+    align-items: center;
+    padding: 18px 50px;
+    background: #ffffff;
+    border-bottom: 1px solid #eee;
+}
+
+.pto-apply-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+    .pto-apply-brand .pto-brand-my {
+        color: #E87A2D;
+        font-style: italic;
+        font-size: 26px;
+        font-weight: 700;
+    }
+
+    .pto-apply-brand .pto-brand-pto {
+        color: #1A1A1A;
+        font-size: 40px;
+        font-weight: 800;
+        letter-spacing: 1px;
+    }
+
+    .pto-apply-brand .pto-brand-partner {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-left: 20px;
+    }
+
+        .pto-apply-brand .pto-brand-partner img {
+            height: 40px;
+            width: auto;
+        }
+
+    .pto-apply-brand .pto-brand-text {
+        font-size: 10px;
+        color: #E87A2D;
+        font-weight: 700;
+        letter-spacing: 3px;
+        margin-top: 2px;
+    }
+
+.pto-apply-subnav {
+    background: #E87A2D;
+    display: flex;
+    justify-content: space-around;
+    padding: 0;
+}
+
+    .pto-apply-subnav .pto-subnav-link {
+        color: #1A1A1A;
+        font-weight: 500;
+        font-size: 18px;
+        text-decoration: none;
+        padding: 16px 24px;
+        flex: 1;
+        text-align: center;
+        transition: background 0.2s;
+    }
+
+        .pto-apply-subnav .pto-subnav-link:hover {
+            background: rgba(0, 0, 0, 0.08);
+        }
+
+    .pto-apply-subnav .pto-subnav-active {
+        background: #c9661e;
+        color: #1A1A1A;
+        font-weight: 700;
+    }
+
+.pto-apply-main {
+    padding: 40px 20px 60px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.pto-apply-card {
+    background: #ffffff;
+    border: 1px solid #c8c8c8;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 1200px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.pto-apply-card-title {
+    background: #e5e5e5;
+    padding: 14px 30px;
+    text-align: center;
+    font-size: 22px;
+    font-weight: 700;
+    color: #1A1A1A;
+    border-bottom: 1px solid #c8c8c8;
+}
+
+.pto-apply-form {
+    padding: 40px 60px 0 60px;
+}
+
+.pto-apply-row {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 40px;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.pto-apply-label {
+    font-size: 20px;
+    color: #333;
+    text-align: right;
+    padding-right: 10px;
+}
+
+.pto-apply-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.pto-apply-input {
+    background: #d9d9d9;
+    border: 1px solid #c0c0c0;
+    border-radius: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #1A1A1A;
+    width: 100%;
+    max-width: 380px;
+    outline: none;
+    transition: all 0.2s;
+}
+
+    .pto-apply-input:focus {
+        background: #fff;
+        border-color: #E87A2D;
+        box-shadow: 0 0 0 3px rgba(232, 122, 45, 0.15);
+    }
+
+.pto-dob-field {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+
+.pto-dob-input {
+    max-width: 300px;
+}
+
+.pto-id-row {
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+}
+
+.pto-id-label {
+    font-size: 20px;
+    color: #333;
+    white-space: nowrap;
+}
+
+.pto-id-input {
+    max-width: 280px;
+}
+
+.pto-gender-field {
+    flex-direction: row;
+    align-items: center;
+    gap: 60px;
+}
+
+.pto-radio-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-size: 18px;
+    color: #333;
+    margin: 0;
+}
+
+    .pto-radio-label input[type="radio"] {
+        width: 20px;
+        height: 20px;
+        accent-color: #888;
+        cursor: pointer;
+    }
+
+.pto-apply-footer {
+    background: #e5e5e5;
+    margin: 40px -60px 0 -60px;
+    padding: 24px 60px;
+    border-top: 1px solid #c8c8c8;
+    display: flex;
+    gap: 16px;
+}
+
+.pto-btn-save,
+.pto-btn-back,
+.pto-btn-cancel {
+    padding: 12px 30px;
+    border-radius: 6px;
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+    display: inline-block;
+    line-height: 1.4;
+}
+
+.pto-btn-save {
+    background: #a8a8a8;
+    color: #ffffff;
+    border-color: #a8a8a8;
+}
+
+    .pto-btn-save:hover {
+        background: #909090;
+        color: #ffffff;
+        text-decoration: none;
+    }
+
+.pto-btn-back {
+    background: #b8b8b8;
+    color: #1A1A1A;
+    border-color: #a0a0a0;
+}
+
+    .pto-btn-back:hover {
+        background: #a0a0a0;
+        color: #1A1A1A;
+        text-decoration: none;
+    }
+
+.pto-btn-cancel {
+    background: #b8b8b8;
+    color: #666;
+    border-color: #a0a0a0;
+}
+
+    .pto-btn-cancel:hover {
+        background: #a0a0a0;
+        color: #333;
+        text-decoration: none;
+    }
+
+.pto-subsection-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: #1A1A1A;
+    margin: 0 0 30px 0;
+    padding-left: 20px;
+    text-align: left;
+}
+
+
+/* ═══════════════════════════════════════════════════════
+   DOCUMENTS UPLOAD STYLES
+   ═══════════════════════════════════════════════════════ */
+
+.pto-doc-row {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 40px;
+    align-items: center;
+    margin-bottom: 40px;
+    padding: 12px 0;
+}
+
+.pto-doc-label {
+    font-size: 20px;
+    color: #333;
+    text-align: right;
+    padding-right: 10px;
+}
+
+.pto-doc-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.pto-file-input {
+    display: none;
+}
+
+.pto-btn-upload {
+    background: #d9d9d9;
+    border: 1px solid #c0c0c0;
+    border-radius: 6px;
+    padding: 10px 20px;
+    font-size: 15px;
+    color: #1A1A1A;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin: 0;
+}
+
+    .pto-btn-upload:hover {
+        background: #c8c8c8;
+    }
+
+.pto-file-name {
+    font-size: 14px;
+    color: #666;
+    font-style: italic;
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+/* ═══════════════════════════════════════════════════════
+   REVIEW & SUBMITTED STYLES
+   ═══════════════════════════════════════════════════════ */
+
+.pto-review-main {
+    padding: 50px 80px 80px 80px;
+    background: #ffffff;
+    min-height: 70vh;
+}
+
+.pto-review-title {
+    font-size: 42px;
+    font-weight: 800;
+    color: #1A1A1A;
+    margin: 0 0 30px 0;
+    letter-spacing: -0.5px;
+}
+
+.pto-review-box {
+    border: 1px solid #1A1A1A;
+    padding: 40px 50px;
+    background: #ffffff;
+    max-width: 780px;
+    margin-bottom: 50px;
+}
+
+.pto-review-row {
+    display: grid;
+    grid-template-columns: 180px 20px 1fr;
+    gap: 10px;
+    align-items: baseline;
+    margin-bottom: 18px;
+    font-size: 20px;
+    color: #1A1A1A;
+}
+
+.pto-review-label {
+    font-weight: 500;
+    text-align: left;
+}
+
+.pto-review-sep {
+    font-weight: 700;
+    text-align: center;
+}
+
+.pto-review-value {
+    font-weight: 500;
+    color: #333;
+    word-break: break-word;
+}
+
+.pto-review-footer {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    margin-top: 30px;
+}
+
+.pto-btn-submit {
+    background: #c8c8c8;
+    color: #ffffff;
+    border: none;
+    padding: 12px 40px;
+    border-radius: 6px;
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+    .pto-btn-submit:hover {
+        background: #a8a8a8;
+    }
+
+.pto-submitted-main {
+    padding: 60px 40px 100px 40px;
+    background: #ffffff;
+    min-height: 65vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.pto-submitted-card {
+    background: #ffffff;
+    border: 1.5px solid #1A1A1A;
+    border-radius: 20px;
+    padding: 60px 80px 50px 80px;
+    text-align: center;
+    max-width: 780px;
+    width: 100%;
+    box-shadow: 0 6px 30px rgba(0, 0, 0, 0.06);
+}
+
+.pto-success-check {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 30px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .pto-success-check svg {
+        width: 100%;
+        height: 100%;
+    }
+
+.pto-submitted-title {
+    font-size: 40px;
+    font-weight: 800;
+    color: #1A1A1A;
+    margin: 0 0 20px 0;
+    letter-spacing: -0.5px;
+}
+
+.pto-submitted-sublabel {
+    font-size: 17px;
+    font-weight: 700;
+    color: #1A1A1A;
+    margin: 0 0 10px 0;
+}
+
+.pto-submitted-reference {
+    font-size: 38px;
+    font-weight: 800;
+    color: #D62828;
+    letter-spacing: 1px;
+    margin: 0 0 40px 0;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.pto-submitted-note {
+    font-size: 16px;
+    color: #555;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.pto-submitted-actions {
+    display: flex;
+    gap: 20px;
+    margin-top: 40px;
+    justify-content: flex-start;
+    max-width: 780px;
+    width: 100%;
+    padding: 0 60px;
+}
+
+.pto-btn-sub-home,
+.pto-btn-sub-track {
+    padding: 14px 34px;
+    border-radius: 6px;
+    font-size: 18px;
+    font-weight: 500;
+    text-decoration: none;
+    border: none;
+    background: #a8a8a8;
+    color: #ffffff;
+    transition: background 0.2s;
+    display: inline-block;
+    cursor: pointer;
+}
+
+    .pto-btn-sub-home:hover,
+    .pto-btn-sub-track:hover {
+        background: #909090;
+        color: #ffffff;
+        text-decoration: none;
+    }
+
+
+/* ═══════════════════════════════════════════════════════
+   TRACK PAGE STYLES
+   ═══════════════════════════════════════════════════════ */
+
+.pto-track-main {
+    padding: 40px 80px 100px 80px;
+    background: #ffffff;
+    min-height: 75vh;
+}
+
+.pto-track-heading {
+    font-size: 32px;
+    font-weight: 800;
+    color: #1A1A1A;
+    margin: 0 0 20px 0;
+    letter-spacing: -0.5px;
+}
+
+.pto-track-info {
+    background: #d9d9d9;
+    padding: 16px 24px;
+    margin-bottom: 60px;
+    max-width: 1240px;
+}
+
+.pto-track-info-line1 {
+    font-size: 22px;
+    color: #1A1A1A;
+    margin: 0 0 6px 0;
+    font-weight: 400;
+}
+
+.pto-track-info-line2 {
+    font-size: 24px;
+    color: #1A1A1A;
+    margin: 0;
+    font-weight: 800;
+}
+
+.pto-required {
+    color: #D62828;
+    font-weight: 700;
+    margin-left: 2px;
+}
+
+.pto-track-form {
+    max-width: 1240px;
+}
+
+.pto-track-row {
+    display: grid;
+    grid-template-columns: 400px 1fr;
+    gap: 60px;
+    align-items: center;
+    margin-bottom: 80px;
+}
+
+.pto-track-labels {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.pto-track-label-bold {
+    font-size: 26px;
+    font-weight: 700;
+    color: #1A1A1A;
+    margin: 0;
+}
+
+.pto-track-or {
+    font-size: 24px;
+    font-weight: 400;
+    color: #1A1A1A;
+    margin: 6px 0;
+}
+
+.pto-track-input-wrap {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.pto-track-input {
+    width: 100%;
+    max-width: 520px;
+    padding: 10px 14px;
+    border: 1px solid #888;
+    border-radius: 6px;
+    background: #ffffff;
+    font-size: 16px;
+    color: #1A1A1A;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+    .pto-track-input:focus {
+        border-color: #E87A2D;
+        box-shadow: 0 0 0 3px rgba(232, 122, 45, 0.15);
+    }
+
+.pto-track-submit-wrap {
+    margin-top: 20px;
+}
+
+.pto-status-main {
+    padding: 60px 40px 100px 40px;
+    background: #ffffff;
+    min-height: 75vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.pto-status-card {
+    background: #ffffff;
+    border: 1.5px solid #1A1A1A;
+    border-radius: 20px;
+    padding: 50px 60px;
+    width: 100%;
+    max-width: 700px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.pto-status-title {
+    font-size: 40px;
+    font-weight: 800;
+    color: #1A1A1A;
+    margin: 0 0 40px 0;
+    letter-spacing: -0.5px;
+}
+
+.pto-status-row {
+    display: grid;
+    grid-template-columns: 200px 20px 1fr;
+    gap: 10px;
+    align-items: baseline;
+    margin-bottom: 22px;
+    font-size: 19px;
+}
+
+.pto-status-label {
+    font-weight: 600;
+    color: #1A1A1A;
+}
+
+.pto-status-sep {
+    font-weight: 700;
+    color: #1A1A1A;
+    text-align: center;
+}
+
+.pto-status-value {
+    font-weight: 500;
+    color: #333;
+    word-break: break-word;
+}
+
+    .pto-status-value.status-verifying {
+        color: #D97706;
+        font-weight: 700;
+    }
+
+    .pto-status-value.status-approved {
+        color: #15803D;
+        font-weight: 700;
+    }
+
+    .pto-status-value.status-pending {
+        color: #B45309;
+        font-weight: 700;
+    }
+
+    .pto-status-value.status-rejected {
+        color: #DC2626;
+        font-weight: 700;
+    }
+
+.pto-notfound-main {
+    padding: 40px 80px 100px 80px;
+    background: #ffffff;
+    min-height: 75vh;
+}
+
+.pto-notfound-heading {
+    font-size: 30px;
+    font-weight: 800;
+    color: #1A1A1A;
+    margin: 0 0 50px 0;
+    letter-spacing: -0.5px;
+}
+
+.pto-notfound-message {
+    font-size: 24px;
+    color: #1A1A1A;
+    margin: 0 0 80px 0;
+    line-height: 1.5;
+    font-weight: 400;
+}
+
+.pto-notfound-link {
+    color: #1A1A1A;
+    font-weight: 800;
+    text-decoration: none;
+    margin-left: 6px;
+    transition: color 0.2s;
+}
+
+    .pto-notfound-link:hover {
+        color: #E87A2D;
+        text-decoration: underline;
+    }
+
+.pto-notfound-main .pto-btn-back {
+    display: inline-block;
+}
+
+
+/* ═══════════════════════════════════════════════════════
+   USER DASHBOARD & PROFILE STYLES
+   ═══════════════════════════════════════════════════════ */
+
+.pto-dashboard-body {
+    margin: 0;
+    padding: 0;
+    background: #ffffff;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    color: #1A1A1A;
+}
+
+.pto-dash-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 50px;
+    background: #ffffff;
+    border-bottom: 1px solid #eee;
+}
+
+.pto-dash-brand {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.pto-brand-my {
+    color: #E87A2D;
+    font-style: italic;
+    font-size: 26px;
+}
+
+.pto-brand-pto {
+    color: #1A1A1A;
+    font-size: 32px;
+    letter-spacing: 1px;
+}
+
+.pto-brand-partner {
+    font-size: 11px;
+    color: #E87A2D;
+    font-weight: 600;
+    letter-spacing: 2px;
+    margin-left: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Fix the logo scaling issue */
+.pto-dash-brand .pto-brand-partner img {
+    height: 40px; /* Force the logo to a normal size */
+    width: auto;
+    max-width: 120px;
+}
+
+.pto-dash-user {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.pto-dash-search {
+    background: none;
+    border: none;
+    font-size: 22px;
+    color: #333;
+    cursor: pointer;
+    padding: 0;
+}
+
+    .pto-dash-search:hover {
+        color: #E87A2D;
+    }
+
+.pto-user-avatar-badge {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #E87A2D;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+.pto-user-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1A1A1A;
+}
+
+.pto-dash-subnav {
+    background: #E87A2D;
+    display: flex;
+    justify-content: space-around;
+    padding: 0;
+    margin: 0;
+}
+
+.pto-subnav-link {
+    color: #1A1A1A;
+    font-weight: 500;
+    font-size: 16px;
+    text-decoration: none;
+    padding: 16px 24px;
+    flex: 1;
+    text-align: center;
+    transition: background 0.2s;
+}
+
+    .pto-subnav-link:hover {
+        background: rgba(0, 0, 0, 0.08);
+        color: #1A1A1A;
+        text-decoration: none;
+    }
+
+.pto-dash-main {
+    padding: 40px 60px 60px 60px;
+    min-height: 60vh;
+    background: #ffffff;
+}
+
+/* Quick action buttons */
+.pto-dash-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 30px;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 40px;
+}
+
+.pto-action-btn {
+    display: block;
+    text-align: center;
+    padding: 30px;
+    border: 1px solid #c0c0c0;
+    border-radius: 12px;
+    background: #ffffff;
+    color: #1A1A1A;
+    font-size: 28px;
+    font-weight: 400;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+    .pto-action-btn:hover {
+        border-color: #888;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        text-decoration: none;
+        color: #1A1A1A;
+    }
+
+/* Main Application Card */
+.pto-app-card {
+    border: 1px solid #c0c0c0;
+    border-radius: 12px;
+    padding: 30px;
+    background: #ffffff;
+}
+
+.pto-app-card-header h2 {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0 0 5px 0;
+    color: #1A1A1A;
+}
+
+.pto-app-subtitle {
+    font-size: 16px;
+    color: #888;
+    margin: 0 0 25px 0;
+}
+
+/* Application Tiles (Site & Period) */
+.pto-app-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.pto-app-tile {
+    border: 1px solid #c0c0c0;
+    border-radius: 16px;
+    padding: 24px 30px;
+    background: #ffffff;
+    position: relative;
+    min-height: 140px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.pto-tile-label {
+    font-size: 16px;
+    color: #888;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.pto-tile-value {
+    font-size: 32px;
+    font-weight: 700;
+    color: #1A1A1A;
+}
+
+/* Renew Button inside tile */
+.pto-tile-action {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+}
+
+.pto-btn-renew {
+    background: #f3dca7;
+    color: #1A1A1A;
+    border: none;
+    padding: 8px 24px;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+    .pto-btn-renew:hover {
+        background: #ebd196;
+    }
+
+/* Download Link */
+.pto-app-download {
+    text-align: left;
+}
+
+.pto-download-link {
+    color: #1A1A1A;
+    font-size: 16px;
+    text-decoration: none;
+    font-weight: 400;
+}
+
+    .pto-download-link:hover {
+        text-decoration: underline;
+    }
+
+/* Dashboard Footer */
+.pto-dash-footer {
+    background: #1B1464;
+    color: #fff;
+    padding: 50px 100px 40px 100px;
+    display: grid;
+    grid-template-columns: 1fr 1.5fr 1fr;
+    gap: 40px;
+}
+
+    .pto-dash-footer h4 {
+        font-size: 16px;
+        font-weight: 700;
+        margin: 0 0 20px 0;
+        color: #fff;
+    }
+
+    .pto-dash-footer ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+        .pto-dash-footer ul li {
+            margin-bottom: 10px;
+        }
+
+    .pto-dash-footer a {
+        color: #C5C4DD;
+        text-decoration: none;
+        font-size: 14px;
+    }
+
+        .pto-dash-footer a:hover {
+            color: #E87A2D;
+            text-decoration: none;
+        }
+
+    .pto-dash-footer p {
+        color: #C5C4DD;
+        font-size: 14px;
+        margin: 0 0 12px 0;
+        line-height: 1.6;
+    }
+
+.pto-dash-socials {
+    display: flex;
+    gap: 16px;
+    justify-content: flex-end;
+    align-items: flex-start;
+    padding-top: 10px;
+}
+
+    .pto-dash-socials a {
+        color: #fff;
+        font-size: 22px;
+    }
+
+        .pto-dash-socials a:hover {
+            color: #E87A2D;
+        }
+
+/* Profile Page Specific */
+.pto-profile-main {
+    padding: 40px 60px 60px 60px;
+    background: #ffffff;
+    min-height: 75vh;
+}
+
+.pto-profile-card {
+    border: 1.5px solid #c0c0c0;
+    border-radius: 16px;
+    padding: 40px 50px;
+    background: #ffffff;
+    max-width: 1200px;
+    margin-bottom: 30px;
+}
+
+.pto-profile-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px 40px;
+    margin-bottom: 40px;
+}
+
+.pto-profile-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.pto-profile-label {
+    font-size: 15px;
+    font-weight: 500;
+    color: #333;
+    margin: 0;
+}
+
+.pto-profile-input,
+.pto-profile-select {
+    background: #e5e5e5;
+    border: 1px solid #d5d5d5;
+    border-radius: 4px;
+    padding: 12px 16px;
+    font-size: 16px;
+    color: #1A1A1A;
+    outline: none;
+    width: 100%;
+    transition: all 0.2s;
+}
+
+    .pto-profile-input:focus,
+    .pto-profile-select:focus {
+        background: #ffffff;
+        border-color: #E87A2D;
+        box-shadow: 0 0 0 3px rgba(232, 122, 45, 0.15);
+    }
+
+.pto-profile-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231A1A1A%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px top 50%;
+    background-size: 12px auto;
+}
+
+.pto-profile-section-title {
+    font-size: 32px;
+    font-weight: 800;
+    color: #1A1A1A;
+    margin: 20px 0 24px 0;
+    letter-spacing: -0.5px;
+}
+
+.pto-profile-actions {
+    display: flex;
+    gap: 16px;
+}
+
+
+/* ═══════════════════════════════════════════════════════
+   RESPONSIVE DESIGN (ALL PAGES)
+   ═══════════════════════════════════════════════════════ */
+
+@media (max-width: 992px) {
+    .pto-navbar, .pto-apply-header, .pto-dash-header {
+        padding: 16px 24px;
+    }
+
+    .pto-nav-links {
+        display: none;
+    }
+
+    .pto-hero {
+        grid-template-columns: 1fr;
+    }
+
+    .pto-hero-text {
+        padding: 40px 24px;
+    }
+
+    .pto-hero h1 {
+        font-size: 48px;
+    }
+
+    .pto-hero-image {
+        min-height: 300px;
+        height: 300px;
+    }
+
+    .pto-footer, .pto-dash-footer {
+        grid-template-columns: 1fr;
+        padding: 40px 24px;
+    }
+
+    .pto-social-icons, .pto-dash-socials {
+        justify-content: flex-start;
+    }
+
+    .pto-apply-card, .pto-profile-card {
+        max-width: 100%;
+    }
+
+    .pto-apply-form, .pto-profile-card {
+        padding: 30px 20px 0 20px;
+    }
+
+    .pto-apply-row, .pto-doc-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .pto-apply-label, .pto-doc-label {
+        text-align: left;
+        font-size: 16px;
+    }
+
+    .pto-apply-footer {
+        margin: 30px -20px 0 -20px;
+        padding: 20px;
+        flex-wrap: wrap;
+    }
+
+    .pto-btn-save, .pto-btn-back, .pto-btn-cancel {
+        flex: 1;
+        text-align: center;
+        min-width: 120px;
+    }
+
+    .pto-gender-field {
+        gap: 30px;
+    }
+
+    .pto-review-main, .pto-submitted-main, .pto-track-main, .pto-status-main, .pto-notfound-main {
+        padding: 30px 20px 60px 20px;
+    }
+
+    .pto-review-title, .pto-submitted-title, .pto-track-heading, .pto-status-title, .pto-notfound-heading {
+        font-size: 28px;
+        margin-bottom: 26px;
+    }
+
+    .pto-review-row, .pto-status-row {
+        grid-template-columns: 130px 16px 1fr;
+        font-size: 16px;
+        margin-bottom: 16px;
+    }
+
+    .pto-track-row {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        margin-bottom: 40px;
+    }
+
+    .pto-track-label-bold {
+        font-size: 20px;
+    }
+
+    .pto-track-or {
+        font-size: 18px;
+    }
+
+    .pto-track-input {
+        max-width: 100%;
+    }
+
+    .pto-submitted-card {
+        padding: 40px 24px 36px 24px;
+        border-radius: 14px;
+    }
+
+    .pto-success-check {
+        width: 90px;
+        height: 90px;
+        margin-bottom: 20px;
+    }
+
+    .pto-submitted-reference {
+        font-size: 26px;
+        margin-bottom: 28px;
+    }
+
+    .pto-submitted-actions {
+        flex-direction: column;
+        padding: 0 24px;
+        margin-top: 30px;
+    }
+
+    .pto-btn-sub-home, .pto-btn-sub-track {
+        width: 100%;
+        text-align: center;
+    }
+
+    .pto-notfound-message {
+        font-size: 18px;
+        margin-bottom: 40px;
+    }
+
+    .pto-dash-main {
+        padding: 24px 20px 40px 20px;
+    }
+
+    .pto-dash-actions, .pto-app-grid, .pto-profile-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .pto-user-name {
+        display: none;
+    }
+
+    .pto-brand-pto {
+        font-size: 26px;
+    }
+
+    .pto-profile-actions {
+        flex-direction: column;
+    }
+
+        .pto-profile-actions .pto-btn-save, .pto-profile-actions .pto-btn-back {
+            width: 100%;
+            text-align: center;
+        }
+}
+
+@media (max-width: 576px) {
+    .pto-hero h1 {
+        font-size: 36px;
+    }
+
+    .pto-btn-login {
+        padding: 10px 24px;
+        font-size: 14px;
+    }
+
+    .pto-btn-primary, .pto-btn-outline, .pto-btn-admin {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+    }
+
+    .pto-hero-buttons {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .pto-auth-card {
+        padding: 40px 30px;
+        border-radius: 18px;
+    }
+
+    .pto-back-link {
+        top: 20px;
+        left: 20px;
+        font-size: 18px;
+    }
+
+    .pto-auth-title {
+        font-size: 24px;
+    }
+
+    .pto-auth-logo img {
+        height: 55px;
+    }
+}
+
+/* ═══════════════════════════════════════════════
+   DASHBOARD HEADER - PROFILE LINK
+   ═══════════════════════════════════════════════ */
+
+.pto-user-profile-link {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    text-decoration: none;
+    color: #1A1A1A;
+    transition: opacity 0.2s;
+    cursor: pointer;
+}
+
+    .pto-user-profile-link:hover {
+        opacity: 0.8;
+        text-decoration: none;
+        color: #1A1A1A;
+    }
+
+
+/* ═══════════════════════════════════════════════
+   PROFILE PAGE HEADER & TABS
+   ═══════════════════════════════════════════════ */
+
+/* Grey Banner */
+.pto-profile-header-banner {
+    background: #e5e5e5;
+    height: 180px;
+    position: relative;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    margin: -40px -50px 30px -50px; /* Pull it to the edges of the card */
+}
+
+/* Large Avatar */
+.pto-profile-avatar-large {
+    width: 120px;
+    height: 120px;
+    background: #E87A2D;
+    color: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 60px;
+    position: absolute;
+    bottom: -30px;
+    left: 50px;
+    border: 4px solid #ffffff;
+}
+
+/* Name */
+.pto-profile-name {
+    position: absolute;
+    bottom: -25px;
+    left: 190px;
+    font-size: 36px;
+    font-weight: 800;
+    color: #1A1A1A;
+    margin: 0;
+}
+
+/* Edit & Logout Buttons */
+.pto-profile-header-actions {
+    position: absolute;
+    bottom: 20px;
+    right: 50px;
+    display: flex;
+    gap: 16px;
+}
+
+.pto-btn-edit {
+    background: transparent;
+    border: 1px solid #1A1A1A;
+    border-radius: 20px;
+    padding: 8px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+    .pto-btn-edit:hover {
+        background: #1A1A1A;
+        color: #ffffff;
+    }
+
+.pto-btn-logout {
+    background: #E87A2D;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1A1A1A;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+    .pto-btn-logout:hover {
+        background: #d16a20;
+    }
+
+/* Tabs */
+.pto-profile-tabs {
+    background: #f0a26c;
+    display: flex;
+    margin: 0 -50px 40px -50px;
+    padding: 0;
+}
+
+.pto-tab-btn {
+    flex: 1;
+    background: transparent;
+    border: none;
+    padding: 16px 20px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #1A1A1A;
+    cursor: pointer;
+    transition: background 0.2s;
+    text-align: center;
+    text-decoration: none; /* Added for link styling */
+    display: block;
+}
+
+    .pto-tab-btn:hover {
+        background: rgba(0,0,0,0.05);
+        text-decoration: none;
+        color: #1A1A1A;
+    }
+
+    .pto-tab-btn.active {
+        background: #E87A2D;
+    }
+
+    .pto-tab-btn:hover:not(.active) {
+        background: rgba(0,0,0,0.05);
+    }
+
+/* Responsive Fixes for Header */
+@media (max-width: 768px) {
+    .pto-profile-header-banner {
+        height: auto;
+        padding: 30px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: -40px -20px 30px -20px;
+    }
+
+    .pto-profile-avatar-large {
+        position: static;
+        margin-bottom: 16px;
+    }
+
+    .pto-profile-name {
+        position: static;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .pto-profile-header-actions {
+        position: static;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .pto-tabs {
+        margin: 0 -20px 30px -20px;
+        flex-direction: column;
+    }
+}
+
+/* ═══════════════════════════════════════════════
+   NOTIFICATIONS PAGE STYLES
+   ═══════════════════════════════════════════════ */
+
+.pto-notifications-main {
+    padding: 40px 80px 80px 80px;
+    background: #ffffff;
+    min-height: 70vh;
+}
+
+.pto-notifications-title {
+    font-size: 28px;
+    font-weight: 800;
+    color: #1A1A1A;
+    margin: 0 0 30px 0;
+}
+
+.pto-notifications-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 1200px;
+    margin-bottom: 40px;
+}
+
+/* Notification Card */
+.pto-notification-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 20px 30px;
+    background: #ffffff;
+    transition: box-shadow 0.2s;
+}
+
+    .pto-notification-card:hover {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+/* Left side (Dot + Text) */
+.pto-notification-left {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+/* Colored Dot */
+.pto-notif-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-top: 6px; /* align with title text */
+    flex-shrink: 0;
+}
+
+/* Dot Colors */
+.dot-warning {
+    background-color: #E87A2D;
+}
+/* Orange */
+.dot-success {
+    background-color: #2E8B3E;
+}
+/* Green */
+.dot-info {
+    background-color: #1A73E8;
+}
+/* Blue */
+
+/* Text Content */
+.pto-notification-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.pto-notif-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1A1A1A;
+    margin: 0 0 4px 0;
+}
+
+.pto-notif-desc {
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+}
+
+/* Date */
+.pto-notification-date {
+    font-size: 13px;
+    color: #888;
+    white-space: nowrap;
+}
+
+/* Actions */
+.pto-notif-actions {
+    display: flex;
+    max-width: 1200px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .pto-notifications-main {
+        padding: 30px 20px;
+    }
+
+    .pto-notification-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .pto-notification-date {
+        margin-left: 28px; /* Align with text */
+    }
+}
+
+
+
+
+
+/* ═══════════════════════════════════════════════
+   ADMIN DASHBOARD EXACT STYLES
+   ═══════════════════════════════════════════════ */
+
+.admin-main-content {
+    background: #ffffff;
+    background-image: linear-gradient(90deg, rgba(232,122,45,0.03) 0%, transparent 33%), linear-gradient(90deg, transparent 33%, rgba(200,200,200,0.05) 33%, transparent 66%), linear-gradient(90deg, transparent 66%, rgba(212,237,218,0.1) 66%);
+    min-height: 80vh;
+    padding: 40px 60px 80px 60px;
+}
+
+.admin-page-header {
+    margin-bottom: 30px;
+}
+
+    .admin-page-header h1 {
+        font-size: 32px;
+        font-weight: 800;
+        color: #1A1A1A;
+        margin: 0 0 5px 0;
+    }
+
+    .admin-page-header p {
+        font-size: 15px;
+        color: #666;
+        margin: 0;
+    }
+
+/* Stat Cards Grid */
+.admin-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 50px;
+}
+
+.admin-stat-card {
+    background: #ffffff;
+    border: 1px solid #d0d0d0;
+    border-radius: 12px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+}
+
+    .admin-stat-card .stat-label {
+        font-size: 14px;
+        color: #555;
+        margin-bottom: 10px;
+    }
+
+    .admin-stat-card .stat-value {
+        font-size: 36px;
+        font-weight: 800;
+        line-height: 1;
+    }
+
+/* Table Section */
+.admin-table-section {
+    margin-bottom: 30px;
+}
+
+    .admin-table-section h2 {
+        font-size: 18px;
+        font-weight: 700;
+        color: #1A1A1A;
+        margin: 0 0 15px 0;
+    }
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #c0c0c0;
+    background: #ffffff;
+}
+
+    .admin-table th {
+        text-align: left;
+        padding: 14px 20px;
+        background: #e5e5e5;
+        border-bottom: 1px solid #c0c0c0;
+        color: #1A1A1A;
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .admin-table td {
+        padding: 16px 20px;
+        border-bottom: 1px solid #e0e0e0;
+        font-size: 15px;
+        color: #1A1A1A;
+    }
+
+    .admin-table tr:last-child td {
+        border-bottom: none;
+    }
+
+.badge-pending {
+    background: #dcfce7; /* Light green background */
+    color: #166534;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* Navbar overrides for Admin */
+.pto-dash-subnav .pto-subnav-link {
+    flex: 1;
+    text-align: center;
+    font-size: 15px;
+    padding: 18px 10px;
+}
+
+.pto-dash-subnav form {
+    flex: 1;
+}
+
+.pto-dash-subnav button.pto-subnav-link {
+    padding: 18px 10px;
+    font-size: 15px;
+    color: #1A1A1A;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .admin-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .admin-main-content {
+        padding: 20px;
+    }
+
+    .admin-stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-table th, .admin-table td {
+        padding: 10px;
+    }
+}
+
+
+/* ═══════════════════════════════════════════════
+   ADMIN APPLICATIONS PAGE STYLES
+   ═══════════════════════════════════════════════ */
+
+/* Search Box */
+.admin-search-box {
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid #c0c0c0;
+    border-radius: 30px;
+    padding: 10px 20px;
+    width: 100%;
+    max-width: 400px;
+}
+
+    .admin-search-box i {
+        color: #666;
+        font-size: 16px;
+        margin-right: 12px;
+    }
+
+    .admin-search-box input {
+        border: none;
+        outline: none;
+        width: 100%;
+        font-size: 14px;
+        color: #1A1A1A;
+        background: transparent;
+    }
+
+        .admin-search-box input::placeholder {
+            color: #aaa;
+        }
+
+/* Filter Pills */
+.admin-filter-pills {
+    display: flex;
+    gap: 10px;
+}
+
+.filter-pill {
+    display: inline-block;
+    padding: 8px 16px;
+    border: 1px solid #c0c0c0;
+    border-radius: 20px;
+    background: #ffffff;
+    color: #1A1A1A;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+    .filter-pill:hover {
+        background: #f0f0f0;
+        text-decoration: none;
+        color: #1A1A1A;
+    }
+
+    .filter-pill.active {
+        background: #808080; /* Dark grey background for active pill */
+        color: #ffffff;
+        border-color: #808080;
+    }
+
+/* Table Badges (if not already in your CSS) */
+.badge-approved {
+    background: #dcfce7;
+    color: #166534;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.badge-rejected {
+    background: #fee2e2;
+    color: #991b1b;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+
+
+/* ═══════════════════════════════════════════════
+   PTO RECORDS STATUS BADGES
+   ═══════════════════════════════════════════════ */
+
+.badge-active {
+    background: #dcfce7;
+    color: #166534;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.badge-expiring {
+    background: #ffedd5;
+    color: #9a3412;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.badge-expired {
+    background: #fee2e2;
+    color: #991b1b;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.badge-renewed {
+    background: #e0f2fe;
+    color: #075985;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.badge-deregistered {
+    background: #f3f4f6;
+    color: #374151;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+
+
+/* ═══════════════════════════════════════════════
+   ADMIN MANAGE SITES SPECIFIC STYLES
+   ═══════════════════════════════════════════════ */
+
+/* Add Site Button */
+.admin-btn-add {
+    background: #808080;
+    color: #ffffff;
+    padding: 10px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: background 0.2s;
+}
+
+    .admin-btn-add:hover {
+        background: #666;
+        color: #ffffff;
+        text-decoration: none;
+    }
+
+/* Remove Button in Table */
+.admin-btn-remove {
+    background: #909090;
+    color: #ffffff;
+    border: none;
+    padding: 6px 16px;
+    border-radius: 4px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+    .admin-btn-remove:hover {
+        background: #666;
+    }
+
+
+/* ═══════════════════════════════════════════════
+   ADMIN ADD SITE FORM STYLES
+   ═══════════════════════════════════════════════ */
+
+.admin-form-container {
+    background: #ffffff;
+    border: 1px solid #c0c0c0;
+    border-radius: 8px;
+    max-width: 1200px;
+    margin: 0 auto;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    overflow: hidden;
+}
+
+.admin-form-header {
+    background: #e5e5e5;
+    padding: 12px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1A1A1A;
+    border-bottom: 1px solid #c0c0c0;
+}
+
+.admin-form-body {
+    padding: 30px 40px;
+}
+
+.admin-form-row {
+    display: flex;
+    margin-bottom: 20px;
+    align-items: center;
+}
+
+.admin-form-label {
+    width: 200px;
+    font-size: 14px;
+    color: #333;
+}
+
+.admin-form-input {
+    flex-grow: 1;
+    max-width: 400px;
+    background: #e5e5e5;
+    border: 1px solid #c0c0c0;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 15px;
+    color: #1A1A1A;
+    outline: none;
+    transition: all 0.2s;
+}
+
+    .admin-form-input:focus {
+        background: #ffffff;
+        border-color: #E87A2D;
+    }
+
+.admin-form-footer {
+    background: #e5e5e5;
+    padding: 16px 40px;
+    border-top: 1px solid #c0c0c0;
+    display: flex;
+    gap: 12px;
+}
+
+/* Form Buttons */
+.admin-btn-save,
+.admin-btn-back,
+.admin-btn-cancel {
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    border: none;
+    transition: background 0.2s;
+}
+
+.admin-btn-save {
+    background: #a8a8a8;
+    color: #ffffff;
+}
+
+    .admin-btn-save:hover {
+        background: #909090;
+    }
+
+.admin-btn-back {
+    background: #c0c0c0;
+    color: #1A1A1A;
+}
+
+    .admin-btn-back:hover {
+        background: #b0b0b0;
+        color: #1A1A1A;
+        text-decoration: none;
+    }
+
+.admin-btn-cancel {
+    background: #c0c0c0;
+    color: #666;
+}
+
+    .admin-btn-cancel:hover {
+        background: #b0b0b0;
+        color: #333;
+        text-decoration: none;
+    }
+
+
+/* ═══════════════════════════════════════════════
+   ADMIN REPORTS EXPORT BUTTONS
+   ═══════════════════════════════════════════════ */
+
+.admin-btn-export {
+    display: inline-block;
+    background: #a8a8a8;
+    color: #ffffff;
+    padding: 4px 14px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+    .admin-btn-export:hover {
+        background: #909090;
+        color: #ffffff;
+        text-decoration: none;
+    }
+
+/* ═══════════════════════════════════════════════
+   ADMIN NAV ACTIVE STATE
+   ═══════════════════════════════════════════════ */
+.active-admin-tab {
+    background-color: #c9661e !important;
+    color: #1A1A1A !important;
+    font-weight: 700;
+}
+
+.active-user-tab {
+    background-color: #c9661e !important;
+    color: #1A1A1A !important;
+    font-weight: 700;
+}
+
+
+
+/* ═══════════════════════════════════════════════
+   USER NAV ACTIVE STATE
+   ═══════════════════════════════════════════════ */
+.active-user-tab {
+    background-color: #c9661e !important;
+    color: #1A1A1A !important;
+    font-weight: 700;
+}

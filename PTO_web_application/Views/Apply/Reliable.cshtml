@@ -1,0 +1,123 @@
+﻿@model PTO_web_application.Models.ViewModels.ApplyReliableViewModel
+
+@{
+    ViewData["Title"] = "Apply - Reliable Information";
+    Layout = "_ApplyLayout";
+}
+
+<!-- ═══════════ HEADER ═══════════ -->
+<header class="pto-apply-header">
+    <div class="pto-apply-brand">
+        <span class="pto-brand-my">my</span>
+        <span class="pto-brand-pto">PTO</span>
+        <span class="pto-brand-partner">
+            <img src="~/images/logo.png" alt="Mangaung" />
+            <span class="pto-brand-text">MANGAUNG</span>
+        </span>
+    </div>
+</header>
+
+<!-- ═══════════ ORANGE SUB-NAV ═══════════ -->
+<nav class="pto-apply-subnav">
+    <a href="#about" class="pto-subnav-link">About us</a>
+    <a href="/Apply" class="pto-subnav-link pto-subnav-active">Apply</a>
+ 
+    <a href="#contact" class="pto-subnav-link">Contact us</a>
+</nav>
+
+<!-- ═══════════ MAIN ═══════════ -->
+<main class="pto-apply-main">
+
+    <h1 class="pto-reliable-title">Reliable Information</h1>
+
+    <div class="pto-apply-card">
+
+        <div class="pto-apply-card-title">
+            PTO Application
+        </div>
+
+        <form asp-controller="Apply" asp-action="Reliable" method="post" class="pto-apply-form">
+            @Html.AntiForgeryToken()
+
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <!-- Monthly income -->
+            <div class="pto-apply-row">
+                <label asp-for="MonthlyIncome" class="pto-apply-label">
+                    Monthly income (less than R3500)
+                </label>
+                <div class="pto-apply-field">
+                    <input asp-for="MonthlyIncome" class="pto-apply-input pto-income-input" />
+                    <span asp-validation-for="MonthlyIncome" class="text-danger" style="font-size: 13px;"></span>
+                </div>
+            </div>
+
+            <!-- South African -->
+            <div class="pto-apply-row">
+                <label class="pto-apply-label">South African \ Naturalised</label>
+                <div class="pto-apply-field pto-gender-field">
+                    <label class="pto-radio-label">
+                        <input type="radio" asp-for="IsSouthAfrican" value="Yes" />
+                        <span>Yes</span>
+                    </label>
+                    <label class="pto-radio-label">
+                        <input type="radio" asp-for="IsSouthAfrican" value="No" />
+                        <span>No</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- First time home owner -->
+            <div class="pto-apply-row">
+                <label class="pto-apply-label">First time home owner</label>
+                <div class="pto-apply-field pto-gender-field">
+                    <label class="pto-radio-label">
+                        <input type="radio" asp-for="IsFirstTimeHomeOwner" value="Yes" />
+                        <span>Yes</span>
+                    </label>
+                    <label class="pto-radio-label">
+                        <input type="radio" asp-for="IsFirstTimeHomeOwner" value="No" />
+                        <span>No</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Over 21 -->
+            <div class="pto-apply-row">
+                <label class="pto-apply-label">Over 21 years</label>
+                <div class="pto-apply-field pto-gender-field">
+                    <label class="pto-radio-label">
+                        <input type="radio" asp-for="IsOver21" value="Yes" />
+                        <span>Yes</span>
+                    </label>
+                    <label class="pto-radio-label">
+                        <input type="radio" asp-for="IsOver21" value="No" />
+                        <span>No</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- First time government subsidy -->
+            <div class="pto-apply-row">
+                <label class="pto-apply-label">First time government subsidy</label>
+                <div class="pto-apply-field pto-gender-field">
+                    <label class="pto-radio-label">
+                        <input type="radio" asp-for="IsFirstTimeGovernmentSubsidy" value="Yes" />
+                        <span>Yes</span>
+                    </label>
+                    <label class="pto-radio-label">
+                        <input type="radio" asp-for="IsFirstTimeGovernmentSubsidy" value="No" />
+                        <span>No</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="pto-apply-footer">
+                <a href="/" class="pto-btn-back">Back</a>
+                <button type="submit" class="pto-btn-save">Continue</button>
+            </div>
+
+        </form>
+    </div>
+</main>

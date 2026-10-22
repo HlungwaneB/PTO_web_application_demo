@@ -1,0 +1,106 @@
+﻿@model PTO_web_application.Models.ViewModels.ApplyReviewViewModel
+
+@{
+    ViewData["Title"] = "Application Review";
+    Layout = "_ApplyLayout";
+}
+
+<!-- ═══════════ HEADER ═══════════ -->
+<header class="pto-apply-header">
+    <div class="pto-apply-brand">
+        <span class="pto-brand-my">my</span>
+        <span class="pto-brand-pto">PTO</span>
+        <span class="pto-brand-partner">
+            <img src="~/images/logo.png" alt="Mangaung" />
+            <span class="pto-brand-text">MANGAUNG</span>
+        </span>
+    </div>
+</header>
+
+<!-- ═══════════ ORANGE SUB-NAV ═══════════ -->
+<nav class="pto-apply-subnav">
+    <a href="#about" class="pto-subnav-link">About us</a>
+    <a href="/Apply" class="pto-subnav-link pto-subnav-active">Apply</a>
+    <a href="#" class="pto-subnav-link">Track Application</a>
+    <a href="#contact" class="pto-subnav-link">Contact us</a>
+</nav>
+
+<!-- ═══════════ MAIN ═══════════ -->
+<main class="pto-review-main">
+
+    <!-- 🟢 ERROR MESSAGE BOX (Shows if database or auth fails) -->
+    @if (ViewData["ErrorMessage"] != null)
+    {
+        <div style="background-color: #f8d7da; color: #721c24; padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #f5c6cb;">
+            <strong>Error:</strong> @ViewData["ErrorMessage"]
+        </div>
+    }
+
+    <h1 class="pto-review-title">Application Review</h1>
+
+    <!-- Review table box -->
+    <div class="pto-review-box">
+
+        <!-- ID number -->
+        <div class="pto-review-row">
+            <span class="pto-review-label">ID number</span>
+            <span class="pto-review-sep">:</span>
+            <span class="pto-review-value">@Model.IdNumber</span>
+        </div>
+
+        <!-- Title -->
+        <div class="pto-review-row">
+            <span class="pto-review-label">Title</span>
+            <span class="pto-review-sep">:</span>
+            <span class="pto-review-value">@Model.Title</span>
+        </div>
+
+        <!-- Initials -->
+        <div class="pto-review-row">
+            <span class="pto-review-label">Initials</span>
+            <span class="pto-review-sep">:</span>
+            <span class="pto-review-value">@Model.Initials</span>
+        </div>
+
+        <!-- Surname -->
+        <div class="pto-review-row">
+            <span class="pto-review-label">Surname</span>
+            <span class="pto-review-sep">:</span>
+            <span class="pto-review-value">@Model.Surname</span>
+        </div>
+
+        <!-- Cellphone -->
+        <div class="pto-review-row">
+            <span class="pto-review-label">Cellphone</span>
+            <span class="pto-review-sep">:</span>
+            <span class="pto-review-value">@Model.Cellphone</span>
+        </div>
+
+        <!-- Email -->
+        <div class="pto-review-row">
+            <span class="pto-review-label">Email</span>
+            <span class="pto-review-sep">:</span>
+            <span class="pto-review-value">@Model.Email</span>
+        </div>
+
+        <!-- Site -->
+        <div class="pto-review-row">
+            <span class="pto-review-label">Site</span>
+            <span class="pto-review-sep">:</span>
+            <span class="pto-review-value">@Model.SiteName</span>
+        </div>
+
+    </div>
+
+    <!-- Footer buttons -->
+    <form asp-controller="Apply" asp-action="Submit" method="post">
+        @Html.AntiForgeryToken()
+
+        <div class="pto-review-footer">
+            <a href="/Apply/CreatePassword" class="pto-btn-back">Back</a>
+            <a href="/" class="pto-btn-cancel">Cancel</a>
+            <button type="submit" class="pto-btn-submit">Submit</button>
+        </div>
+    </form>
+
+</main>

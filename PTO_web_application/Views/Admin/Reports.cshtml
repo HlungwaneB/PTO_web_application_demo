@@ -1,0 +1,60 @@
+﻿@model PTO_web_application.Models.ViewModels.AdminReportsViewModel
+
+@{
+    ViewData["Title"] = "Reports";
+    Layout = "_AdminLayout";
+}
+
+<main class="admin-dashboard-main">
+
+    <!-- Page Title -->
+    <div class="admin-page-header">
+        <h1>Reports</h1>
+        <p>View and file reports</p>
+    </div>
+
+    <div style="margin-bottom: 20px;">
+        <form asp-controller="Admin" asp-action="GenerateReport" method="post" style="display: inline;">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="admin-btn-add" style="background: #a8a8a8;">Generate report</button>
+        </form>
+    </div>
+
+    <!-- Table -->
+    <div class="admin-table-section">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Report</th>
+                    <th>Period</th>
+                    <th>Generated</th>
+                    <th>Export</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var report in Model.Reports)
+                {
+                    <tr>
+                        <td>@report.ReportName</td>
+                        <td>@report.Period</td>
+                        <td>@report.GeneratedDate</td>
+                        <td>
+                            <!-- Export Buttons -->
+                            <div style="display: flex; gap: 8px;">
+                                <!-- We will connect these buttons to actual file downloads later -->
+                                <a href="/Admin/ExportReport?format=pdf" target="_blank" class="admin-btn-export">PDF</a>
+                                <a href="/Admin/ExportReport?format=excel" class="admin-btn-export">Excel</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Action Buttons -->
+    <div style="margin-top: 30px; background: #d9d9d9; padding: 12px 20px;">
+        <a href="/Admin/Dashboard" class="pto-btn-back" style="background: #a8a8a8; color: white; text-decoration: none;">Back</a>
+    </div>
+
+</main>

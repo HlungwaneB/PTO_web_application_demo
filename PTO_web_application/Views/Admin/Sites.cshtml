@@ -1,0 +1,90 @@
+﻿@model PTO_web_application.Models.ViewModels.AdminSitesViewModel
+
+@{
+    ViewData["Title"] = "Manage sites";
+    Layout = "_AdminLayout";
+}
+
+<main class="admin-dashboard-main">
+
+    <!-- Page Title -->
+    <div class="admin-page-header">
+        <h1>Manage sites</h1>
+        <p>Add or remove available sites</p>
+    </div>
+
+    <!-- Search Bar & Add Button Row -->
+    <form asp-controller="Admin" asp-action="Sites" method="get" style="margin-bottom: 20px; display: flex; gap: 16px; align-items: center;">
+        <div class="admin-search-box" style="flex-grow: 1;">
+            <i class="bi bi-search"></i>
+            <input type="text" name="search" value="@Model.SearchQuery" placeholder="Search site number or settlement" />
+            <input type="hidden" name="filter" value="@Model.ActiveFilter" />
+        </div>
+        <!-- Add Site Button -->
+        <a href="/Admin/AddSite" class="admin-btn-add">+ Add site</a>
+    </form>
+
+    <!-- Filter Pills -->
+    <div class="admin-filter-pills">
+        <a href="/Admin/Sites?filter=All&search=@Model.SearchQuery"
+           class="filter-pill @(Model.ActiveFilter == "All" ? "active" : "")">All</a>
+
+        <a href="/Admin/Sites?filter=Available&search=@Model.SearchQuery"
+           class="filter-pill @(Model.ActiveFilter == "Available" ? "active" : "")">Available</a>
+
+        <a href="/Admin/Sites?filter=Occupied&search=@Model.SearchQuery"
+           class="filter-pill @(Model.ActiveFilter == "Occupied" ? "active" : "")">Occupied</a>
+    </div>
+
+    <!-- Table -->
+    <div class="admin-table-section" style="margin-top: 20px;">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Site no.</th>
+                    <th>Settlement</th>
+                    <th>Size</th>
+                    <th>Status</th>
+                    <th style="width: 100px;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Sites.Count == 0)
+                {
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 40px; color: #888;">
+                            No sites found matching your search.
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var site in Model.Sites)
+                    {
+                        <tr>
+                            <td>@site.SiteNo</td>
+                            <td>@site.Settlement</td>
+                            <td>@site.Size</td>
+                            <td>
+                                <span class="@site.StatusClass">@site.Status</span>
+                            </td>
+                            <td>
+                                <form asp-controller="Admin" asp-action="DeleteSite" method="post" style="display:inline;">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="siteId" value="@site.SiteId" />
+                                    <button type="submit" class="admin-btn-remove" onclick="return confirm('Are you sure you want to remove this site?');">Remove</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Action Buttons -->
+    <div style="margin-top: 30px; background: #d9d9d9; padding: 12px 20px;">
+        <a href="/Admin/Dashboard" class="pto-btn-back" style="background: #a8a8a8; color: white; text-decoration: none;">Back</a>
+    </div>
+
+</main>
