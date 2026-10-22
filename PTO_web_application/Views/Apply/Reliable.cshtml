@@ -64,6 +64,7 @@
                         <input type="radio" asp-for="IsSouthAfrican" value="No" />
                         <span>No</span>
                     </label>
+                    <span asp-validation-for="IsSouthAfrican" class="text-danger" style="font-size: 13px; margin-left: 12px;"></span>
                 </div>
             </div>
 
@@ -79,6 +80,7 @@
                         <input type="radio" asp-for="IsFirstTimeHomeOwner" value="No" />
                         <span>No</span>
                     </label>
+                    <span asp-validation-for="IsFirstTimeHomeOwner" class="text-danger" style="font-size: 13px; margin-left: 12px;"></span>
                 </div>
             </div>
 
@@ -94,6 +96,7 @@
                         <input type="radio" asp-for="IsOver21" value="No" />
                         <span>No</span>
                     </label>
+                    <span asp-validation-for="IsOver21" class="text-danger" style="font-size: 13px; margin-left: 12px;"></span>
                 </div>
             </div>
 
@@ -107,6 +110,38 @@
                     </label>
                     <label class="pto-radio-label">
                         <input type="radio" asp-for="IsFirstTimeGovernmentSubsidy" value="No" />
+                        <span>No</span>
+                    </label>
+                    <span asp-validation-for="IsFirstTimeGovernmentSubsidy" class="text-danger" style="font-size: 13px; margin-left: 12px;"></span>
+                </div>
+            </div>
+
+
+            <!-- Military veteran (optional) -->
+            <div class="pto-apply-row">
+                <label class="pto-apply-label">Military veteran (optional)</label>
+                <div class="pto-apply-field pto-gender-field">
+                    <label class="pto-radio-label">
+                        <input type="radio" asp-for="IsMilitaryVeteran" value="Yes" />
+                        <span>Yes</span>
+                    </label>
+                    <label class="pto-radio-label">
+                        <input type="radio" asp-for="IsMilitaryVeteran" value="No" />
+                        <span>No</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Elderly person -->
+            <div class="pto-apply-row">
+                <label class="pto-apply-label">Elderly person</label>
+                <div class="pto-apply-field pto-gender-field">
+                    <label class="pto-radio-label">
+                        <input type="radio" asp-for="IsElderly" value="Yes" />
+                        <span>Yes</span>
+                    </label>
+                    <label class="pto-radio-label">
+                        <input type="radio" asp-for="IsElderly" value="No" />
                         <span>No</span>
                     </label>
                 </div>

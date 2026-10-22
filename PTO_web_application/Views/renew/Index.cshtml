@@ -16,6 +16,7 @@
 
         <!-- Form Body -->
         <form asp-controller="Renew" asp-action="Index" method="post" style="padding: 30px 40px;">
+            <div asp-validation-summary="All" class="text-danger mb-3" style="font-size: 13px;"></div>
             @Html.AntiForgeryToken()
 
             <!-- Row 1: Expiry Date (Now Dynamic) -->

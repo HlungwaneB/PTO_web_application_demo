@@ -39,12 +39,14 @@
 
             <!-- Section subtitle -->
             <h2 class="pto-subsection-title">Dependent Information</h2>
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3" style="font-size: 13px;"></div>
 
             <!-- Surname -->
             <div class="pto-apply-row">
                 <label asp-for="Surname" class="pto-apply-label">Surname</label>
                 <div class="pto-apply-field">
                     <input asp-for="Surname" class="pto-apply-input" />
+                    <span asp-validation-for="Surname" class="text-danger" style="font-size: 13px;"></span>
                 </div>
             </div>
 
@@ -53,6 +55,7 @@
                 <label asp-for="Initials" class="pto-apply-label">Initials</label>
                 <div class="pto-apply-field">
                     <input asp-for="Initials" class="pto-apply-input" maxlength="10" />
+                    <span asp-validation-for="Initials" class="text-danger" style="font-size: 13px;"></span>
                 </div>
             </div>
 
@@ -61,6 +64,7 @@
                 <label asp-for="FirstNames" class="pto-apply-label">First name(s)</label>
                 <div class="pto-apply-field">
                     <input asp-for="FirstNames" class="pto-apply-input" />
+                    <span asp-validation-for="FirstNames" class="text-danger" style="font-size: 13px;"></span>
                 </div>
             </div>
 
@@ -93,6 +97,7 @@
                 <label asp-for="EmailAddress" class="pto-apply-label">E-mail address</label>
                 <div class="pto-apply-field">
                     <input asp-for="EmailAddress" type="email" class="pto-apply-input" />
+                    <span asp-validation-for="EmailAddress" class="text-danger" style="font-size: 13px;"></span>
                 </div>
             </div>
 

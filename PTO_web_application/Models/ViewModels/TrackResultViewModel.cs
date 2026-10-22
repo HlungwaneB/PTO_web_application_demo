@@ -9,6 +9,8 @@ public class TrackResultViewModel
     public string Year { get; set; } = string.Empty;
     public string SiteName { get; set; } = string.Empty;
     public string Status { get; set; } = string.Empty;
+    public DateTime? SubmittedOn { get; set; }
+    public DateTime? ValidUntil { get; set; }
 
     // 🟢 Helper to color the status text in the View
     public string StatusClass => Status.ToLower() switch

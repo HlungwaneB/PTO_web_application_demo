@@ -45,4 +45,20 @@ public class SiteService
     {
         await _supabase.From<Site>().Where(s => s.SiteId == siteId).Delete();
     }
+
+    /// <summary>All sites, available or not (the Sites screen needs both for its Available / Occupied filter).</summary>
+    public async Task<List<Site>> GetAllSitesAsync()
+    {
+        var response = await _supabase.From<Site>().Get();
+        return response.Models;
+    }
+
+    /// <summary>True when a site with the same number already exists in the same settlement.</summary>
+    public async Task<bool> SiteExistsAsync(string siteName, string location)
+    {
+        var all = await GetAllSitesAsync();
+        return all.Any(s =>
+            string.Equals(s.SiteName?.Trim(), siteName.Trim(), StringComparison.OrdinalIgnoreCase) &&
+            string.Equals(s.Location?.Trim(), location.Trim(), StringComparison.OrdinalIgnoreCase));
+    }
 }

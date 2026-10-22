@@ -47,6 +47,8 @@ public class AdminController : Controller
     [HttpGet]
     public async Task<IActionResult> Dashboard()
     {
+        if (!IsAdmin()) return RedirectToAction("Login", "Auth");
+
         // 1. Fetch all applications and sites
         var allApps = await _applicationService.GetAllApplicationsAsync();
         var allSites = await _siteService.GetAvailableSitesAsync();
@@ -196,8 +198,8 @@ public class AdminController : Controller
     {
         if (!IsAdmin()) return RedirectToAction("Login", "Auth");
 
-        // Fetch all sites from the database
-        var allSites = await _siteService.GetAvailableSitesAsync();
+        // Fetch all sites (available AND occupied) so the Occupied filter has something to show
+        var allSites = await _siteService.GetAllSitesAsync();
 
         // Apply Filter
         if (filter != "All")
@@ -258,13 +260,20 @@ public class AdminController : Controller
             return View(model);
         }
 
+        // Same site number in the same settlement must not be added twice
+        if (await _siteService.SiteExistsAsync(model.SiteNumber, model.Settlement))
+        {
+            ModelState.AddModelError(nameof(model.SiteNumber), "This site number already exists in that settlement.");
+            return View(model);
+        }
+
         try
         {
             var newSite = new Models.Site
             {
-                SiteName = model.SiteNumber,
-                Location = model.Settlement,
-                SizeDetails = model.SiteSize,
+                SiteName = model.SiteNumber.Trim(),
+                Location = model.Settlement.Trim(),
+                SizeDetails = model.SiteSize.Trim(),
                 FeeAmount = 1500.00m,
                 IsAvailable = true
             };
@@ -358,6 +367,15 @@ public class AdminController : Controller
 
         var allApps = await _applicationService.GetAllApplicationsAsync();
         var fileName = $"PTO_Report_{DateTime.Now:yyyyMMdd_HHmm}";
+        format = (format ?? string.Empty).Trim();
+
+        // Quote a CSV cell and neutralise spreadsheet formulas (=, +, -, @) typed into a name
+        static string Csv(string? v)
+        {
+            v ??= string.Empty;
+            if (v.Length > 0 && "=+-@".Contains(v[0])) v = "'" + v;
+            return "\"" + v.Replace("\"", "\"\"") + "\"";
+        }
 
         if (format.ToLower() == "excel")
         {
@@ -366,7 +384,7 @@ public class AdminController : Controller
             csvBuilder.AppendLine("ID Number,Full Name,Email,Phone,Status,Start Date,End Date");
             foreach (var app in allApps)
             {
-                csvBuilder.AppendLine($"{app.IdNumber},{app.FullName},{app.Email},{app.PhoneNumber},{app.CurrentStatus},{app.StartDate:yyyy-MM-dd},{app.EndDate:yyyy-MM-dd}");
+                csvBuilder.AppendLine($"{Csv(app.IdNumber)},{Csv(app.FullName)},{Csv(app.Email)},{Csv(app.PhoneNumber)},{Csv(app.CurrentStatus)},{app.StartDate:yyyy-MM-dd},{app.EndDate:yyyy-MM-dd}");
             }
             var fileBytes = System.Text.Encoding.UTF8.GetBytes(csvBuilder.ToString());
             return File(fileBytes, "text/csv", $"{fileName}.csv");
@@ -502,6 +520,19 @@ public class AdminController : Controller
     public async Task<IActionResult> DeleteSite(Guid siteId)
     {
         if (!IsAdmin()) return RedirectToAction("Login", "Auth");
+
+        // A site that applications point to must not be removed (it would leave applications without a site)
+        if (siteId == Guid.Empty)
+        {
+            TempData["SiteError"] = "Invalid site.";
+            return RedirectToAction("Sites");
+        }
+        var usedBy = await _applicationService.CountBySiteAsync(siteId);
+        if (usedBy > 0)
+        {
+            TempData["SiteError"] = $"This site cannot be removed: {usedBy} application(s) use it.";
+            return RedirectToAction("Sites");
+        }
 
         try
         {

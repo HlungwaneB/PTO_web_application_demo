@@ -1,0 +1,18 @@
+@model PTO_web_application.Models.ViewModels.PtoTrackerViewModel
+@* Shared tracker: 5-segment formalisation journey bar + step timeline. Used by Track/Result and Dashboard/Tracking. *@
+<div class="pto-tr-journey" aria-hidden="true">
+    @for (int i = 1; i <= 5; i++)
+    {
+        <span class="@(i <= Model.Stage ? "on" : (i == Model.Stage + 1 && Model.Status != "Rejected" && Model.Status != "Cancelled" ? "now" : ""))"></span>
+    }
+</div>
+<div class="pto-tr-text">@Model.Headline</div>
+<ul class="pto-tr-timeline">
+    @foreach (var step in Model.Steps())
+    {
+        <li class="@step.State">
+            <div class="pto-tr-title">@step.Title</div>
+            @if (!string.IsNullOrEmpty(step.Detail)) { <div class="pto-tr-detail">@step.Detail</div> }
+        </li>
+    }
+</ul>

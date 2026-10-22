@@ -33,6 +33,9 @@ public class TrackController : Controller
             return View(model);
         }
 
+        // Only a 13-digit ID number can have an application (also stops odd text reaching the query)
+        if (!ModelState.IsValid) return View(model);
+
         var idNumber = model.IdNumber.Trim();
 
         // 1. Fetch the application from Supabase
@@ -57,7 +60,9 @@ public class TrackController : Controller
             Surname = application.FullName.Split(' ').LastOrDefault() ?? application.FullName,
             Year = application.EndDate.Year.ToString(),
             SiteName = site?.SiteName ?? "Unknown Site",
-            Status = application.CurrentStatus // This will be "Verifying" or "Approved"
+            Status = application.CurrentStatus, // This will be "Verifying" or "Approved"
+            SubmittedOn = application.StartDate,
+            ValidUntil = application.EndDate
         };
 
         return View("Result", resultModel);

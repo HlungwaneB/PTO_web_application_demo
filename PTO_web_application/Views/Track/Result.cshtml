@@ -62,5 +62,10 @@
             <span class="pto-status-sep">:</span>
             <span class="pto-status-value @Model.StatusClass">@Model.Status</span>
         </div>
+
+        <!-- Tracker: journey bar + timeline -->
+        <div class="pto-tr-card" style="margin-top: 28px; text-align: left;">
+            <partial name="_PtoTracker" model="new PTO_web_application.Models.ViewModels.PtoTrackerViewModel { Status = Model.Status, SubmittedOn = Model.SubmittedOn, ValidUntil = Model.ValidUntil }" />
+        </div>
     </div>
 </main>

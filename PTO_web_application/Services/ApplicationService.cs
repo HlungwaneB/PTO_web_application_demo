@@ -78,4 +78,49 @@ public class ApplicationService
             return new List<Application>();
         }
     }
+
+    // ---------------------------------------------------------------
+    // Added helpers (read-only checks + one contact update). They use
+    // only columns that already exist in the "applications" table.
+    // ---------------------------------------------------------------
+
+    /// <summary>True when an application already exists for this ID number.</summary>
+    public async Task<bool> IdNumberExistsAsync(string idNumber)
+    {
+        try
+        {
+            var response = await _supabase
+                .From<Application>()
+                .Where(a => a.IdNumber == idNumber)
+                .Limit(1)
+                .Get();
+            return response.Models.Any();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"IdNumberExists failed: {ex.Message}");
+            return false; // do not block the applicant because of a read error; the database rule still protects us
+        }
+    }
+
+    /// <summary>How many applications use this site (a site with applications must not be deleted).</summary>
+    public async Task<int> CountBySiteAsync(Guid siteId)
+    {
+        var response = await _supabase
+            .From<Application>()
+            .Where(a => a.SiteId == siteId)
+            .Get();
+        return response.Models.Count;
+    }
+
+    /// <summary>Updates only the phone number and e-mail address of one applicant.</summary>
+    public async Task UpdateContactAsync(string idNumber, string phoneNumber, string email)
+    {
+        await _supabase
+            .From<Application>()
+            .Where(a => a.IdNumber == idNumber)
+            .Set(a => a.PhoneNumber, phoneNumber)
+            .Set(a => a.Email, email)
+            .Update();
+    }
 }

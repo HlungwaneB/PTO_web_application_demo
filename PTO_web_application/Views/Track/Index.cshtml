@@ -51,7 +51,8 @@
             <div class="pto-track-input-wrap">
                 <input asp-for="IdNumber"
                        class="pto-track-input"
-                       placeholder="" />
+                       placeholder="" maxlength="13" />
+                <span asp-validation-for="IdNumber" class="text-danger" style="font-size: 13px;"></span>
             </div>
         </div>
 
