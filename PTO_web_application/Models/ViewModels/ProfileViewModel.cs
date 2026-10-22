@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using PTO_web_application.Validation;
 
 namespace PTO_web_application.Models.ViewModels;
 
@@ -20,22 +22,33 @@ public class ProfileViewModel
     public string IdentityNumber { get; set; } = string.Empty;
 
     // Contact Details
+    [SaCellphone]
     public string PrimaryMobile { get; set; } = string.Empty;
+    [EmailAddress(ErrorMessage = "Invalid email address")]
+    [StringLength(254, ErrorMessage = "Email address is too long.")]
     public string PrimaryEmail { get; set; } = string.Empty;
 
     // Address Details
+    [StringLength(20, ErrorMessage = "Street number is too long.")]
     public string StreetNumber { get; set; } = string.Empty;
+    [StringLength(60, ErrorMessage = "Suburb is too long.")]
     public string Suburb { get; set; } = string.Empty;
+    [StringLength(120, ErrorMessage = "Postal address is too long.")]
     public string PostalAddress { get; set; } = string.Empty;
+    [RegularExpression(@"^(\d{4})?$", ErrorMessage = "Postal code must be 4 digits.")]
     public string PostalCode { get; set; } = string.Empty;
     public string Country { get; set; } = "South Africa";
     public string AddressType { get; set; } = string.Empty;
 
     // Next of Kin
+    [PersonName]
     public string KinName { get; set; } = string.Empty;
+    [PersonName]
     public string KinSurname { get; set; } = string.Empty;
     public string Relationship { get; set; } = string.Empty;
+    [SaCellphone]
     public string KinPhone { get; set; } = string.Empty;
+    [EmailAddress(ErrorMessage = "Invalid email address")]
     public string KinEmail { get; set; } = string.Empty;
     public string KinAddress { get; set; } = string.Empty;
 

@@ -9,7 +9,12 @@ var builder = WebApplication.CreateBuilder(args);
 // ═══════════════════════════════════════════════════
 // 1. Add MVC services
 // ═══════════════════════════════════════════════════
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options =>
+{
+    // Only fields marked [Required] are required. Without this, every non-nullable string
+    // (for example "Home cellphone" or "Notes") was silently treated as required.
+    options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true;
+});
 
 // ═══════════════════════════════════════════════════
 // 2. Register Supabase client (server-side singleton)
@@ -47,6 +52,10 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 builder.Services.AddHttpContextAccessor();
+
+// Validation settings (see Validation/SaId.cs)
+PTO_web_application.Validation.SaId.EnforceCheckDigit =
+    builder.Configuration.GetValue<bool?>("Validation:EnforceIdCheckDigit") ?? true;
 
 var app = builder.Build();
 

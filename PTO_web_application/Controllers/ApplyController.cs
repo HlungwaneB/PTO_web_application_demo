@@ -4,6 +4,8 @@ using PTO_web_application.Models;
 using PTO_web_application.Models.ViewModels;
 using PTO_web_application.Services;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
+using PTO_web_application.Validation;
 
 namespace PTO_web_application.Controllers;
 
@@ -66,9 +68,26 @@ public class ApplyController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Personal(ApplyPersonalViewModel model)
+    public async Task<IActionResult> Personal(ApplyPersonalViewModel model)
     {
+        // The eligibility step must be finished first
+        if (HttpContext.Session.GetObject<ApplyReliableViewModel>("apply_reliable") == null)
+            return RedirectToAction("Reliable");
+
         if (!ModelState.IsValid) return View(model);
+
+        // Normalise the text so " thabo " and "Thabo" are stored the same way
+        model.IdNumber = model.IdNumber.Trim();
+        model.Surname = model.Surname.Trim();
+        model.FirstNames = model.FirstNames.Trim();
+        model.Initials = model.Initials.Replace(".", "").Trim().ToUpperInvariant();
+
+        // One application per ID number
+        if (await _applicationService.IdNumberExistsAsync(model.IdNumber))
+        {
+            ModelState.AddModelError("IdNumber", "An application already exists for this ID Number. Please log in or track your application.");
+            return View(model);
+        }
 
         // Fail-safe validation for ID and DOB match
         if (model.DateOfBirth.HasValue && model.IdNumber.Length == 13)
@@ -134,6 +153,29 @@ public class ApplyController : Controller
 
         if (!ModelState.IsValid) return View(model);
 
+        // Earlier steps must be finished
+        if (HttpContext.Session.GetObject<ApplyPersonalViewModel>("apply_personal") == null)
+            return RedirectToAction("Personal");
+
+        // Normalise: 082 123 4567 and +27821234567 become 0821234567, e-mail addresses are trimmed and lower-case
+        model.Cellphone = Rules.NormalizePhone(model.Cellphone);
+        model.ConfirmCellphone = Rules.NormalizePhone(model.ConfirmCellphone);
+        model.HomeCellphone = Rules.NormalizePhone(model.HomeCellphone);
+        model.EmailAddress = (model.EmailAddress ?? string.Empty).Trim().ToLowerInvariant();
+        model.ConfirmEmailAddress = (model.ConfirmEmailAddress ?? string.Empty).Trim().ToLowerInvariant();
+
+        // The chosen site must be a real site that is still free
+        if (!Guid.TryParse(model.SelectedSiteId, out var chosenSiteId))
+        {
+            ModelState.AddModelError("SelectedSiteId", "Please select a site.");
+        }
+        else
+        {
+            var chosenSite = await _siteService.GetSiteByIdAsync(chosenSiteId);
+            if (chosenSite == null || !chosenSite.IsAvailable)
+                ModelState.AddModelError("SelectedSiteId", "That site is no longer available. Please choose another site.");
+        }
+
         // Check Cellphone format
         if (!System.Text.RegularExpressions.Regex.IsMatch(model.Cellphone, @"^0\d{9}$"))
             ModelState.AddModelError("Cellphone", "Please enter a valid 10-digit SA cellphone number.");
@@ -147,6 +189,13 @@ public class ApplyController : Controller
         if (!ModelState.IsValid) return View(model);
 
         HttpContext.Session.SetObject("apply_contact", model);
+
+        // "Do you have dependants?" = NO: skip the Dependent screen
+        if (model.IsDependant == "No")
+        {
+            HttpContext.Session.Remove("apply_dependent");
+            return RedirectToAction("Documents");
+        }
         return RedirectToAction("Dependent");
     }
 
@@ -166,6 +215,14 @@ public class ApplyController : Controller
     public IActionResult Dependent(ApplyDependentViewModel model)
     {
         if (!ModelState.IsValid) return View(model);
+
+        model.Cellphone = Rules.NormalizePhone(model.Cellphone);
+        model.Initials = (model.Initials ?? string.Empty).Replace(".", "").Trim().ToUpperInvariant();
+
+        var applicant = HttpContext.Session.GetObject<ApplyPersonalViewModel>("apply_personal");
+        if (applicant == null) return RedirectToAction("Personal");
+        if (applicant.IdNumber == model.IdNumber)
+            ModelState.AddModelError("IdNumber", "A dependant cannot have the same ID Number as the applicant.");
 
         if (string.IsNullOrEmpty(model.IdNumber) || !System.Text.RegularExpressions.Regex.IsMatch(model.IdNumber, @"^\d{13}$"))
             ModelState.AddModelError("IdNumber", "ID Number must be exactly 13 digits.");
@@ -194,19 +251,22 @@ public class ApplyController : Controller
     {
         if (!ModelState.IsValid) return View(model);
 
-        var allowedExtensions = new[] { ".pdf", ".jpg", ".jpeg", ".png" };
-        const long maxFileSize = 5 * 1024 * 1024;
+        var contactStep = HttpContext.Session.GetObject<ApplyContactViewModel>("apply_contact");
+        if (contactStep == null) return RedirectToAction("Contact");
 
-        foreach (var file in new[] { model.CertifiedId, model.ProofOfIncome, model.DependentId })
+        // Required documents
+        if (model.CertifiedId == null || model.CertifiedId.Length == 0)
+            ModelState.AddModelError(string.Empty, "Please upload your Certified ID.");
+        if (model.ProofOfIncome == null || model.ProofOfIncome.Length == 0)
+            ModelState.AddModelError(string.Empty, "Please upload your Proof of income.");
+        if (contactStep.IsDependant == "Yes" && (model.DependentId == null || model.DependentId.Length == 0))
+            ModelState.AddModelError(string.Empty, "Please upload the Dependent ID.");
+
+        // Size, extension and real file signature (PDF / JPG / PNG, maximum 5 MB)
+        foreach (var (file, label) in new[] { (model.CertifiedId, "Certified ID"), (model.ProofOfIncome, "Proof of income"), (model.DependentId, "Dependent ID") })
         {
-            if (file != null && file.Length > 0)
-            {
-                var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
-                if (!allowedExtensions.Contains(ext))
-                    ModelState.AddModelError(string.Empty, $"File type not allowed for {file.FileName}.");
-                if (file.Length > maxFileSize)
-                    ModelState.AddModelError(string.Empty, $"File {file.FileName} is too large (Max 5MB).");
-            }
+            var problem = await FileRules.CheckAsync(file, label);
+            if (problem != null) ModelState.AddModelError(string.Empty, problem);
         }
 
         if (!ModelState.IsValid) return View(model);
@@ -236,6 +296,13 @@ public class ApplyController : Controller
         var incomeUrl = await UploadToSupabaseAsync(model.ProofOfIncome, "proof_of_income");
         var depUrl = await UploadToSupabaseAsync(model.DependentId, "dependent_ids");
 
+        // Do not carry on when a file could not be stored
+        if (idUrl == "upload-failed" || incomeUrl == "upload-failed" || depUrl == "upload-failed")
+        {
+            ModelState.AddModelError(string.Empty, "A file could not be uploaded. Please try again.");
+            return View(model);
+        }
+
         HttpContext.Session.SetString("doc_certified_id_url", idUrl);
         HttpContext.Session.SetString("doc_proof_income_url", incomeUrl);
         HttpContext.Session.SetString("doc_dependent_id_url", depUrl);
@@ -261,6 +328,13 @@ public class ApplyController : Controller
         if (model.Password != model.ConfirmPassword)
         {
             ModelState.AddModelError("ConfirmPassword", "Passwords do not match.");
+            return View(model);
+        }
+
+        var personalStep = HttpContext.Session.GetObject<ApplyPersonalViewModel>("apply_personal");
+        if (personalStep != null && model.Password.Contains(personalStep.IdNumber))
+        {
+            ModelState.AddModelError("Password", "The password must not contain your ID Number.");
             return View(model);
         }
 
@@ -295,6 +369,33 @@ public class ApplyController : Controller
         if (personal == null || contact == null || passwordStep == null)
         {
             ViewData["ErrorMessage"] = "Session expired. Please fill out the form again.";
+            return View("Review", BuildReviewModel());
+        }
+
+        // ---- Server-side re-check of everything collected in the earlier steps ----
+        var reliable = HttpContext.Session.GetObject<ApplyReliableViewModel>("apply_reliable");
+        var problems = new List<string>();
+        if (reliable == null) problems.Add("Please complete the Reliable Information step.");
+        foreach (object step in new object?[] { reliable, personal, contact, passwordStep })
+        {
+            if (step == null) continue;
+            var results = new List<ValidationResult>();
+            Validator.TryValidateObject(step, new ValidationContext(step), results, true);
+            problems.AddRange(results.Select(r => r.ErrorMessage ?? "Invalid information.").Distinct());
+        }
+        if (string.IsNullOrEmpty(idUrl) || idUrl == "upload-failed") problems.Add("The Certified ID document is missing.");
+        if (string.IsNullOrEmpty(incomeUrl) || incomeUrl == "upload-failed") problems.Add("The Proof of income document is missing.");
+        if (contact.IsDependant == "Yes" && (string.IsNullOrEmpty(depUrl) || depUrl == "upload-failed")) problems.Add("The Dependent ID document is missing.");
+        if (!Guid.TryParse(contact.SelectedSiteId, out var siteGuid)) problems.Add("The selected site is not valid.");
+        if (problems.Count == 0)
+        {
+            var site = await _siteService.GetSiteByIdAsync(siteGuid);
+            if (site == null || !site.IsAvailable) problems.Add("The selected site is no longer available. Go back and choose another site.");
+            if (await _applicationService.IdNumberExistsAsync(personal.IdNumber)) problems.Add("An application already exists for this ID Number.");
+        }
+        if (problems.Count > 0)
+        {
+            ViewData["ErrorMessage"] = string.Join(" ", problems);
             return View("Review", BuildReviewModel());
         }
 
@@ -352,7 +453,17 @@ public class ApplyController : Controller
             }
 
             // 5. Success
-            HttpContext.Session.Clear();
+            if (IsOfficer())
+            {
+                // A PTO Officer captured this application for a beneficiary: keep the officer signed in
+                foreach (var key in new[] { "apply_reliable", "apply_personal", "apply_contact", "apply_dependent", "apply_password",
+                                            "doc_certified_id_url", "doc_proof_income_url", "doc_dependent_id_url" })
+                    HttpContext.Session.Remove(key);
+            }
+            else
+            {
+                HttpContext.Session.Clear();
+            }
             HttpContext.Session.SetString("app_reference", personal.IdNumber);
             return RedirectToAction("Submitted");
         }
@@ -374,6 +485,13 @@ public class ApplyController : Controller
 
         var model = new ApplicationSubmittedViewModel { ReferenceNumber = reference };
         return View(model);
+    }
+
+    /// <summary>True when the person using the wizard is a signed-in PTO Officer (assisting a beneficiary).</summary>
+    private bool IsOfficer()
+    {
+        var who = HttpContext.Session.GetString("sb-id-number");
+        return !string.IsNullOrEmpty(who) && who.Trim().Equals("officer", StringComparison.OrdinalIgnoreCase);
     }
 
     // Helper method to rebuild the Review model if an error occurs

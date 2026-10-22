@@ -36,6 +36,11 @@
            class="filter-pill @(Model.ActiveFilter == "Occupied" ? "active" : "")">Occupied</a>
     </div>
 
+    @if (TempData["SiteError"] != null)
+    {
+        <div class="text-danger" style="margin-top: 12px; font-weight: bold;">@TempData["SiteError"]</div>
+    }
+
     <!-- Table -->
     <div class="admin-table-section" style="margin-top: 20px;">
         <table class="admin-table">

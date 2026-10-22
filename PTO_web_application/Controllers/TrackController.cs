@@ -33,6 +33,9 @@ public class TrackController : Controller
             return View(model);
         }
 
+        // Only a 13-digit ID number can have an application (also stops odd text reaching the query)
+        if (!ModelState.IsValid) return View(model);
+
         var idNumber = model.IdNumber.Trim();
 
         // 1. Fetch the application from Supabase

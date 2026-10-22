@@ -45,6 +45,7 @@
         <form id="profileForm" asp-controller="Profile" asp-action="Index" method="post">
             @Html.AntiForgeryToken()
             <input type="hidden" asp-for="ActiveTab" />
+            <div asp-validation-summary="All" class="text-danger mb-3" style="font-size: 13px; padding: 0 40px;"></div>
 
             <!-- TAB 1: PERSONAL DETAILS -->
             @if (Model.ActiveTab == "personal")
